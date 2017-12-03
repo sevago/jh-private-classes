@@ -57,7 +57,7 @@ jobs:
           path: ~/junit
 
       - run:
-          name: install yarn
+          name: Install yarn
           command: sudo npm install -g yarn
 
       - run:

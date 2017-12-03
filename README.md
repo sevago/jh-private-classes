@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/sevago/jh-private-classes.svg?style=svg)](https://circleci.com/gh/sevago/jh-private-classes)
+
 # privateclasses
 This application was generated using JHipster 4.11.1, you can find documentation and help at [http://www.jhipster.tech/documentation-archive/v4.11.1](http://www.jhipster.tech/documentation-archive/v4.11.1).
 

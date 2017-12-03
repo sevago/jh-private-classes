@@ -1,0 +1,67 @@
+
+<div *ngIf="invoice">
+    <h2><span>Invoice</span> {{invoice.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span>Number</span></dt>
+        <dd>
+            <span>{{invoice.number}}</span>
+        </dd>
+        <dt><span>Period Start Date</span></dt>
+        <dd>
+            <span>{{invoice.periodStartDate | date:'mediumDate'}}</span>
+        </dd>
+        <dt><span>Period End Date</span></dt>
+        <dd>
+            <span>{{invoice.periodEndDate | date:'mediumDate'}}</span>
+        </dd>
+        <dt><span>Issue Date</span></dt>
+        <dd>
+            <span>{{invoice.issueDate | date:'mediumDate'}}</span>
+        </dd>
+        <dt><span>Due Date</span></dt>
+        <dd>
+            <span>{{invoice.dueDate | date:'mediumDate'}}</span>
+        </dd>
+        <dt><span>Total Amount</span></dt>
+        <dd>
+            <span>{{invoice.totalAmount}}</span>
+        </dd>
+        <dt><span>Total Currency</span></dt>
+        <dd>
+            <span>{{invoice.totalCurrency}}</span>
+        </dd>
+        <dt><span>Lesson</span></dt>
+        <dd>
+            <span *ngFor="let lesson of invoice.lessons; let last = last">
+                <a [routerLink]="['/lesson', lesson?.id ]">{{lesson.id}}</a>{{last ? '' : ', '}}
+            </span>
+        </dd>
+        <dt><span>Bill To Student</span></dt>
+        <dd>
+            <div *ngIf="invoice.billToStudentId">
+                <a [routerLink]="['/student', invoice.billToStudentId]">{{invoice.billToStudentName}}</a>
+            </div>
+        </dd>
+        <dt><span>Teaching Instructor</span></dt>
+        <dd>
+            <div *ngIf="invoice.teachingInstructorId">
+                <a [routerLink]="['/instructor', invoice.teachingInstructorId]">{{invoice.teachingInstructorName}}</a>
+            </div>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'invoice/'+ invoice.id + '/edit'} }]"
+            replaceUrl="true"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span> Edit</span>
+    </button>
+</div>

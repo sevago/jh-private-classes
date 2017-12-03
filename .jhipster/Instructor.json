@@ -1,0 +1,84 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "invoice",
+            "otherEntityName": "invoice",
+            "otherEntityRelationshipName": "teachingInstructor"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "lesson",
+            "otherEntityName": "lesson",
+            "otherEntityRelationshipName": "teachingInstructor"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "user",
+            "otherEntityName": "user",
+            "otherEntityField": "login"
+        },
+        {
+            "relationshipType": "many-to-many",
+            "otherEntityRelationshipName": "instructor",
+            "relationshipName": "rate",
+            "otherEntityName": "rate",
+            "otherEntityField": "description",
+            "ownerSide": true
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "minlength",
+                "maxlength",
+                "pattern"
+            ],
+            "fieldValidateRulesMinlength": 1,
+            "fieldValidateRulesMaxlength": 70,
+            "fieldValidateRulesPattern": "^[A-Za-z0-9]+$"
+        },
+        {
+            "fieldName": "address",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": 1,
+            "fieldValidateRulesMaxlength": 255
+        },
+        {
+            "fieldName": "phoneNumber",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": 10,
+            "fieldValidateRulesMaxlength": 13
+        },
+        {
+            "fieldName": "email",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "minlength",
+                "maxlength",
+                "pattern"
+            ],
+            "fieldValidateRulesMinlength": 7,
+            "fieldValidateRulesMaxlength": 100,
+            "fieldValidateRulesPattern": "^[_.@A-Za-z0-9-]+$"
+        }
+    ],
+    "changelogDate": "20171203051511",
+    "entityTableName": "instructor",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false
+}

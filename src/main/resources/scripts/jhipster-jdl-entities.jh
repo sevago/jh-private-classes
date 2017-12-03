@@ -1,0 +1,102 @@
+MIN_NAME = 1
+MAX_NAME = 70
+MIN_ADDRESS = 1
+MAX_ADDRESS = 255
+MIN_EMAIL = 7
+MAX_EMAIL = 100
+MIN_PHONE = 10
+MAX_PHONE = 13
+MAX_DURATION = 24
+
+entity Lesson {
+	date LocalDate required,
+	duration BigDecimal required max(MAX_DURATION),
+    totalCharge BigDecimal required
+}
+
+entity Instructor {
+	name String required minlength(MIN_NAME) maxlength(MAX_NAME) pattern(/^[A-Za-z0-9]+$/),
+    address String minlength(MIN_ADDRESS) maxlength(MAX_ADDRESS),
+    phoneNumber String minlength(MIN_PHONE) maxlength(MAX_PHONE),
+    email String minlength(MIN_EMAIL) maxlength(MAX_EMAIL) pattern(/^[_.@A-Za-z0-9-]+$/)
+}
+
+entity LessonType {
+	description String required,
+    ratio BigDecimal required max(1)
+}
+
+entity Student {
+	name String required minlength(MIN_NAME) maxlength(MAX_NAME) pattern(/^[A-Za-z0-9]+$/),
+	phoneNumber String minlength(MIN_PHONE) maxlength(MAX_PHONE),
+    email String minlength(MIN_EMAIL) maxlength(MAX_EMAIL) pattern(/^[_.@A-Za-z0-9-]+$/)
+}
+
+entity Invoice {
+	number Integer required,
+    periodStartDate LocalDate required,
+    periodEndDate LocalDate required,
+    issueDate LocalDate required,
+    dueDate LocalDate required,
+    totalAmount BigDecimal,
+    totalCurrency RateCurrency
+}
+
+entity Rate {
+	description String,
+    amount BigDecimal,
+	currency RateCurrency required,
+    unit RateUnit required
+}
+
+entity Activity {
+	name String required,
+	description String
+}
+
+entity Location {
+	name String required,
+    address String,
+    description String
+}
+
+enum RateUnit {
+	MINUTE, HOUR, DAY, EVENT
+}
+
+enum RateCurrency {
+	CAD, USD, EUR
+}
+
+relationship OneToMany {
+	Student{invoice} to Invoice{billToStudent(name) required},
+    Instructor{invoice} to Invoice{teachingInstructor(name) required},
+	Instructor{lesson} to Lesson{teachingInstructor(name) required}
+}
+
+relationship ManyToOne {
+    Lesson{activity(name) required} to Activity,
+    Lesson{location(name) required} to Location,
+    Lesson{lessonType(description) required} to LessonType,
+    Lesson{rate(description) required} to Rate
+}
+
+relationship ManyToOne {
+	Instructor{user(login)} to User,
+    Student{user(login)} to User,
+    Activity{user(login)} to User,
+    Location{user(login)} to User,
+    LessonType{user(login)} to User,
+    Rate{user(login)} to User
+}
+
+relationship ManyToMany {
+	 Lesson{student(name)} to Student{lesson},
+     Instructor{rate(description)} to Rate{instructor},
+     Invoice{lesson} to Lesson{invoice}
+}
+
+dto all with mapstruct
+service all with serviceImpl
+
+paginate Lesson, Student, Invoice with pagination

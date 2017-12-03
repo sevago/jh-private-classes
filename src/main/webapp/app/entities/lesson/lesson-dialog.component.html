@@ -1,0 +1,146 @@
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="myLessonLabel">Create or edit a Lesson</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                (click)="clear()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group" [hidden]="!lesson.id">
+            <label for="id">ID</label>
+            <input type="text" class="form-control" id="id" name="id"
+                   [(ngModel)]="lesson.id" readonly />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_date">Date</label>
+            <div class="input-group">
+                <input id="field_date" type="text" class="form-control" name="date" ngbDatepicker  #dateDp="ngbDatepicker" [(ngModel)]="lesson.date"
+                required/>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-secondary" (click)="dateDp.toggle()"><i class="fa fa-calendar"></i></button>
+                </span>
+            </div>
+            <div [hidden]="!(editForm.controls.date?.dirty && editForm.controls.date?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.date?.errors?.required">
+                   This field is required.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_duration">Duration</label>
+            <input type="number" class="form-control" name="duration" id="field_duration"
+                [(ngModel)]="lesson.duration" required max="24"/>
+            <div [hidden]="!(editForm.controls.duration?.dirty && editForm.controls.duration?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.duration?.errors?.required">
+                   This field is required.
+                </small>
+                <small class="form-text text-danger"
+                    [hidden]="!editForm.controls.duration?.errors?.max">
+                    This field cannot be more than 24.
+                </small>
+                <small class="form-text text-danger"
+                    [hidden]="!editForm.controls.duration?.errors?.number">
+                    This field should be a number.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_totalCharge">Total Charge</label>
+            <input type="number" class="form-control" name="totalCharge" id="field_totalCharge"
+                [(ngModel)]="lesson.totalCharge" required/>
+            <div [hidden]="!(editForm.controls.totalCharge?.dirty && editForm.controls.totalCharge?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.totalCharge?.errors?.required">
+                   This field is required.
+                </small>
+                <small class="form-text text-danger"
+                    [hidden]="!editForm.controls.totalCharge?.errors?.number">
+                    This field should be a number.
+                </small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-control-label" for="field_activity">Activity</label>
+            <select class="form-control" id="field_activity" name="activity" [(ngModel)]="lesson.activityId"  required>
+                <option *ngIf="!editForm.value.activity" [ngValue]="null" selected></option>
+                <option [ngValue]="activityOption.id" *ngFor="let activityOption of activities; trackBy: trackActivityById">{{activityOption.name}}</option>
+            </select>
+        </div>
+        <div [hidden]="!(editForm.controls.activity?.dirty && editForm.controls.activity?.invalid)">
+            <small class="form-text text-danger"
+                [hidden]="!editForm.controls.activity?.errors?.required">
+                This field is required.
+            </small>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_location">Location</label>
+            <select class="form-control" id="field_location" name="location" [(ngModel)]="lesson.locationId"  required>
+                <option *ngIf="!editForm.value.location" [ngValue]="null" selected></option>
+                <option [ngValue]="locationOption.id" *ngFor="let locationOption of locations; trackBy: trackLocationById">{{locationOption.name}}</option>
+            </select>
+        </div>
+        <div [hidden]="!(editForm.controls.location?.dirty && editForm.controls.location?.invalid)">
+            <small class="form-text text-danger"
+                [hidden]="!editForm.controls.location?.errors?.required">
+                This field is required.
+            </small>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_lessonType">Lesson Type</label>
+            <select class="form-control" id="field_lessonType" name="lessonType" [(ngModel)]="lesson.lessonTypeId"  required>
+                <option *ngIf="!editForm.value.lessonType" [ngValue]="null" selected></option>
+                <option [ngValue]="lessonTypeOption.id" *ngFor="let lessonTypeOption of lessontypes; trackBy: trackLessonTypeById">{{lessonTypeOption.description}}</option>
+            </select>
+        </div>
+        <div [hidden]="!(editForm.controls.lessonType?.dirty && editForm.controls.lessonType?.invalid)">
+            <small class="form-text text-danger"
+                [hidden]="!editForm.controls.lessonType?.errors?.required">
+                This field is required.
+            </small>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_rate">Rate</label>
+            <select class="form-control" id="field_rate" name="rate" [(ngModel)]="lesson.rateId"  required>
+                <option *ngIf="!editForm.value.rate" [ngValue]="null" selected></option>
+                <option [ngValue]="rateOption.id" *ngFor="let rateOption of rates; trackBy: trackRateById">{{rateOption.description}}</option>
+            </select>
+        </div>
+        <div [hidden]="!(editForm.controls.rate?.dirty && editForm.controls.rate?.invalid)">
+            <small class="form-text text-danger"
+                [hidden]="!editForm.controls.rate?.errors?.required">
+                This field is required.
+            </small>
+        </div>
+        <div class="form-group">
+            <label for="field_student">Student</label>
+            <select class="form-control" id="field_student" multiple name="student" [(ngModel)]="lesson.students">
+                <option [ngValue]="getSelected(lesson.students, studentOption)" *ngFor="let studentOption of students; trackBy: trackStudentById">{{studentOption.name}}</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_teachingInstructor">Teaching Instructor</label>
+            <select class="form-control" id="field_teachingInstructor" name="teachingInstructor" [(ngModel)]="lesson.teachingInstructorId"  required>
+                <option *ngIf="!editForm.value.teachingInstructor" [ngValue]="null" selected></option>
+                <option [ngValue]="instructorOption.id" *ngFor="let instructorOption of instructors; trackBy: trackInstructorById">{{instructorOption.name}}</option>
+            </select>
+        </div>
+        <div [hidden]="!(editForm.controls.teachingInstructor?.dirty && editForm.controls.teachingInstructor?.invalid)">
+            <small class="form-text text-danger"
+                [hidden]="!editForm.controls.teachingInstructor?.errors?.required">
+                This field is required.
+            </small>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
+            <span class="fa fa-ban"></span>&nbsp;<span>Cancel</span>
+        </button>
+        <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+            <span class="fa fa-save"></span>&nbsp;<span>Save</span>
+        </button>
+    </div>
+</form>

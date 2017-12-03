@@ -42,6 +42,23 @@ public class CacheConfiguration {
             cm.createCache(com.sevago.mpc.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(com.sevago.mpc.domain.User.class.getName() + ".authorities", jcacheConfiguration);
             cm.createCache(com.sevago.mpc.domain.SocialUserConnection.class.getName(), jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Lesson.class.getName(), jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Lesson.class.getName() + ".students", jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Lesson.class.getName() + ".invoices", jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Instructor.class.getName(), jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Instructor.class.getName() + ".invoices", jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Instructor.class.getName() + ".lessons", jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Instructor.class.getName() + ".rates", jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.LessonType.class.getName(), jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Student.class.getName(), jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Student.class.getName() + ".invoices", jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Student.class.getName() + ".lessons", jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Invoice.class.getName(), jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Invoice.class.getName() + ".lessons", jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Rate.class.getName(), jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Rate.class.getName() + ".instructors", jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Activity.class.getName(), jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Location.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

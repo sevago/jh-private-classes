@@ -1,0 +1,41 @@
+
+<div *ngIf="rate">
+    <h2><span>Rate</span> {{rate.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span>Description</span></dt>
+        <dd>
+            <span>{{rate.description}}</span>
+        </dd>
+        <dt><span>Amount</span></dt>
+        <dd>
+            <span>{{rate.amount}}</span>
+        </dd>
+        <dt><span>Currency</span></dt>
+        <dd>
+            <span>{{rate.currency}}</span>
+        </dd>
+        <dt><span>Unit</span></dt>
+        <dd>
+            <span>{{rate.unit}}</span>
+        </dd>
+        <dt><span>User</span></dt>
+        <dd>
+            {{rate.userLogin}}
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'rate/'+ rate.id + '/edit'} }]"
+            replaceUrl="true"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span> Edit</span>
+    </button>
+</div>

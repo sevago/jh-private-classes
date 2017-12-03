@@ -1,0 +1,149 @@
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="myInvoiceLabel">Create or edit a Invoice</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                (click)="clear()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group" [hidden]="!invoice.id">
+            <label for="id">ID</label>
+            <input type="text" class="form-control" id="id" name="id"
+                   [(ngModel)]="invoice.id" readonly />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_number">Number</label>
+            <input type="number" class="form-control" name="number" id="field_number"
+                [(ngModel)]="invoice.number" required/>
+            <div [hidden]="!(editForm.controls.number?.dirty && editForm.controls.number?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.number?.errors?.required">
+                   This field is required.
+                </small>
+                <small class="form-text text-danger"
+                    [hidden]="!editForm.controls.number?.errors?.number">
+                    This field should be a number.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_periodStartDate">Period Start Date</label>
+            <div class="input-group">
+                <input id="field_periodStartDate" type="text" class="form-control" name="periodStartDate" ngbDatepicker  #periodStartDateDp="ngbDatepicker" [(ngModel)]="invoice.periodStartDate"
+                required/>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-secondary" (click)="periodStartDateDp.toggle()"><i class="fa fa-calendar"></i></button>
+                </span>
+            </div>
+            <div [hidden]="!(editForm.controls.periodStartDate?.dirty && editForm.controls.periodStartDate?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.periodStartDate?.errors?.required">
+                   This field is required.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_periodEndDate">Period End Date</label>
+            <div class="input-group">
+                <input id="field_periodEndDate" type="text" class="form-control" name="periodEndDate" ngbDatepicker  #periodEndDateDp="ngbDatepicker" [(ngModel)]="invoice.periodEndDate"
+                required/>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-secondary" (click)="periodEndDateDp.toggle()"><i class="fa fa-calendar"></i></button>
+                </span>
+            </div>
+            <div [hidden]="!(editForm.controls.periodEndDate?.dirty && editForm.controls.periodEndDate?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.periodEndDate?.errors?.required">
+                   This field is required.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_issueDate">Issue Date</label>
+            <div class="input-group">
+                <input id="field_issueDate" type="text" class="form-control" name="issueDate" ngbDatepicker  #issueDateDp="ngbDatepicker" [(ngModel)]="invoice.issueDate"
+                required/>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-secondary" (click)="issueDateDp.toggle()"><i class="fa fa-calendar"></i></button>
+                </span>
+            </div>
+            <div [hidden]="!(editForm.controls.issueDate?.dirty && editForm.controls.issueDate?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.issueDate?.errors?.required">
+                   This field is required.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_dueDate">Due Date</label>
+            <div class="input-group">
+                <input id="field_dueDate" type="text" class="form-control" name="dueDate" ngbDatepicker  #dueDateDp="ngbDatepicker" [(ngModel)]="invoice.dueDate"
+                required/>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-secondary" (click)="dueDateDp.toggle()"><i class="fa fa-calendar"></i></button>
+                </span>
+            </div>
+            <div [hidden]="!(editForm.controls.dueDate?.dirty && editForm.controls.dueDate?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.dueDate?.errors?.required">
+                   This field is required.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_totalAmount">Total Amount</label>
+            <input type="number" class="form-control" name="totalAmount" id="field_totalAmount"
+                [(ngModel)]="invoice.totalAmount" />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_totalCurrency">Total Currency</label>
+            <select class="form-control" name="totalCurrency" [(ngModel)]="invoice.totalCurrency" id="field_totalCurrency" >
+                <option value="CAD">CAD</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="field_lesson">Lesson</label>
+            <select class="form-control" id="field_lesson" multiple name="lesson" [(ngModel)]="invoice.lessons">
+                <option [ngValue]="getSelected(invoice.lessons, lessonOption)" *ngFor="let lessonOption of lessons; trackBy: trackLessonById">{{lessonOption.id}}</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_billToStudent">Bill To Student</label>
+            <select class="form-control" id="field_billToStudent" name="billToStudent" [(ngModel)]="invoice.billToStudentId"  required>
+                <option *ngIf="!editForm.value.billToStudent" [ngValue]="null" selected></option>
+                <option [ngValue]="studentOption.id" *ngFor="let studentOption of students; trackBy: trackStudentById">{{studentOption.name}}</option>
+            </select>
+        </div>
+        <div [hidden]="!(editForm.controls.billToStudent?.dirty && editForm.controls.billToStudent?.invalid)">
+            <small class="form-text text-danger"
+                [hidden]="!editForm.controls.billToStudent?.errors?.required">
+                This field is required.
+            </small>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="field_teachingInstructor">Teaching Instructor</label>
+            <select class="form-control" id="field_teachingInstructor" name="teachingInstructor" [(ngModel)]="invoice.teachingInstructorId"  required>
+                <option *ngIf="!editForm.value.teachingInstructor" [ngValue]="null" selected></option>
+                <option [ngValue]="instructorOption.id" *ngFor="let instructorOption of instructors; trackBy: trackInstructorById">{{instructorOption.name}}</option>
+            </select>
+        </div>
+        <div [hidden]="!(editForm.controls.teachingInstructor?.dirty && editForm.controls.teachingInstructor?.invalid)">
+            <small class="form-text text-danger"
+                [hidden]="!editForm.controls.teachingInstructor?.errors?.required">
+                This field is required.
+            </small>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
+            <span class="fa fa-ban"></span>&nbsp;<span>Cancel</span>
+        </button>
+        <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+            <span class="fa fa-save"></span>&nbsp;<span>Save</span>
+        </button>
+    </div>
+</form>

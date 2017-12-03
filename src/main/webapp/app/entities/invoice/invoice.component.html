@@ -1,0 +1,101 @@
+<div>
+    <h2>
+        <span>Invoices</span>
+        <button class="btn btn-primary float-right jh-create-entity create-invoice" [routerLink]="['/', { outlets: { popup: ['invoice-new'] } }]">
+            <span class="fa fa-plus"></span>
+            <span class="hidden-sm-down" >
+            Create new Invoice
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+        <div class="col-sm-12">
+            <form name="searchForm" class="form-inline">
+                <div class="input-group w-100 mt-3">
+                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="Query">
+                    <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
+                        <span class="fa fa-search"></span>
+                    </button>
+                    <button class="input-group-addon btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                        <span class="fa fa-trash-o"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br/>
+    <div class="table-responsive" *ngIf="invoices">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span>ID</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="number"><span>Number</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="periodStartDate"><span>Period Start Date</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="periodEndDate"><span>Period End Date</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="issueDate"><span>Issue Date</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="dueDate"><span>Due Date</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="totalAmount"><span>Total Amount</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="totalCurrency"><span>Total Currency</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="billToStudentName"><span>Bill To Student</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="teachingInstructorName"><span>Teaching Instructor</span> <span class="fa fa-sort"></span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let invoice of invoices ;trackBy: trackId">
+                <td><a [routerLink]="['../invoice', invoice.id ]">{{invoice.id}}</a></td>
+                <td>{{invoice.number}}</td>
+                <td>{{invoice.periodStartDate | date:'mediumDate'}}</td>
+                <td>{{invoice.periodEndDate | date:'mediumDate'}}</td>
+                <td>{{invoice.issueDate | date:'mediumDate'}}</td>
+                <td>{{invoice.dueDate | date:'mediumDate'}}</td>
+                <td>{{invoice.totalAmount}}</td>
+                <td>{{invoice.totalCurrency}}</td>
+                <td>
+                    <div *ngIf="invoice.billToStudentId">
+                        <a [routerLink]="['../student', invoice.billToStudentId  ]" >{{invoice.billToStudentName}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="invoice.teachingInstructorId">
+                        <a [routerLink]="['../instructor', invoice.teachingInstructorId  ]" >{{invoice.teachingInstructorName}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['../invoice', invoice.id ]"
+                                class="btn btn-info btn-sm">
+                            <span class="fa fa-eye"></span>
+                            <span class="d-none d-md-inline">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'invoice/'+ invoice.id + '/edit'} }]"
+                                replaceUrl="true"
+                                class="btn btn-primary btn-sm">
+                            <span class="fa fa-pencil"></span>
+                            <span class="d-none d-md-inline">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'invoice/'+ invoice.id + '/delete'} }]"
+                                replaceUrl="true"
+                                class="btn btn-danger btn-sm">
+                            <span class="fa fa-remove"></span>
+                            <span class="d-none d-md-inline">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+        <div *ngIf="invoices && invoices.length">
+            <div class="row justify-content-center">
+                <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+            </div>
+            <div class="row justify-content-center">
+                <ngb-pagination [collectionSize]="totalItems" [maxSize]="5" [pageSize]="itemsPerPage" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
+            </div>
+        </div>
+</div>

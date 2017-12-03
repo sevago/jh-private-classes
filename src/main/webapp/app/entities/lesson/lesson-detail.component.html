@@ -1,0 +1,69 @@
+
+<div *ngIf="lesson">
+    <h2><span>Lesson</span> {{lesson.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span>Date</span></dt>
+        <dd>
+            <span>{{lesson.date | date:'mediumDate'}}</span>
+        </dd>
+        <dt><span>Duration</span></dt>
+        <dd>
+            <span>{{lesson.duration}}</span>
+        </dd>
+        <dt><span>Total Charge</span></dt>
+        <dd>
+            <span>{{lesson.totalCharge}}</span>
+        </dd>
+        <dt><span>Activity</span></dt>
+        <dd>
+            <div *ngIf="lesson.activityId">
+                <a [routerLink]="['/activity', lesson.activityId]">{{lesson.activityName}}</a>
+            </div>
+        </dd>
+        <dt><span>Location</span></dt>
+        <dd>
+            <div *ngIf="lesson.locationId">
+                <a [routerLink]="['/location', lesson.locationId]">{{lesson.locationName}}</a>
+            </div>
+        </dd>
+        <dt><span>Lesson Type</span></dt>
+        <dd>
+            <div *ngIf="lesson.lessonTypeId">
+                <a [routerLink]="['/lesson-type', lesson.lessonTypeId]">{{lesson.lessonTypeDescription}}</a>
+            </div>
+        </dd>
+        <dt><span>Rate</span></dt>
+        <dd>
+            <div *ngIf="lesson.rateId">
+                <a [routerLink]="['/rate', lesson.rateId]">{{lesson.rateDescription}}</a>
+            </div>
+        </dd>
+        <dt><span>Student</span></dt>
+        <dd>
+            <span *ngFor="let student of lesson.students; let last = last">
+                <a [routerLink]="['/student', student?.id ]">{{student.name}}</a>{{last ? '' : ', '}}
+            </span>
+        </dd>
+        <dt><span>Teaching Instructor</span></dt>
+        <dd>
+            <div *ngIf="lesson.teachingInstructorId">
+                <a [routerLink]="['/instructor', lesson.teachingInstructorId]">{{lesson.teachingInstructorName}}</a>
+            </div>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'lesson/'+ lesson.id + '/edit'} }]"
+            replaceUrl="true"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span> Edit</span>
+    </button>
+</div>

@@ -64,7 +64,7 @@ public class ActivityServiceImpl implements ActivityService{
     @Transactional(readOnly = true)
     public List<ActivityDTO> findAll() {
         log.debug("Request to get all Activities");
-        return activityRepository.findAll().stream()
+        return activityRepository.findByUserIsCurrentUser().stream()
             .map(activityMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

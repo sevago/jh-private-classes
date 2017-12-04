@@ -1,11 +1,13 @@
 package com.sevago.mpc.service.impl;
 
+import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.LessonService;
 import com.sevago.mpc.domain.Lesson;
 import com.sevago.mpc.repository.LessonRepository;
 import com.sevago.mpc.repository.search.LessonSearchRepository;
 import com.sevago.mpc.service.dto.LessonDTO;
 import com.sevago.mpc.service.mapper.LessonMapper;
+import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -63,7 +65,7 @@ public class LessonServiceImpl implements LessonService{
     @Transactional(readOnly = true)
     public Page<LessonDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Lessons");
-        return lessonRepository.findAll(pageable)
+        return lessonRepository.findByTeachingInstructorUserLoginOrderByDateDesc(SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new InternalServerErrorException("Current user login not found")), pageable)
             .map(lessonMapper::toDto);
     }
 

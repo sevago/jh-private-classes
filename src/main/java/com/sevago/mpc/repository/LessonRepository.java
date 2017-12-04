@@ -1,6 +1,8 @@
 package com.sevago.mpc.repository;
 
 import com.sevago.mpc.domain.Lesson;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import org.springframework.data.jpa.repository.*;
@@ -18,5 +20,7 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
 
     @Query("select lesson from Lesson lesson left join fetch lesson.students where lesson.id =:id")
     Lesson findOneWithEagerRelationships(@Param("id") Long id);
+
+    Page<Lesson> findByTeachingInstructorUserLoginOrderByDateDesc(String currentUserLogin, Pageable pageable);
 
 }

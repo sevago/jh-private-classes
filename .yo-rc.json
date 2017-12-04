@@ -31,6 +31,15 @@
       "cucumber"
     ],
     "jhiPrefix": "jhi",
-    "enableTranslation": false
+    "enableTranslation": false,
+    "aws": {
+      "applicationName": "privateclasses",
+      "environmentName": "privateclasses-env",
+      "bucketName": "privateclasses",
+      "instanceType": "t2.micro",
+      "awsRegion": "us-west-2",
+      "dbName": "mpc",
+      "dbInstanceClass": "db.t2.micro"
+    }
   }
 }

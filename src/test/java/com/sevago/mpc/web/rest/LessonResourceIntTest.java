@@ -2,16 +2,15 @@ package com.sevago.mpc.web.rest;
 
 import com.sevago.mpc.PrivateclassesApp;
 
-import com.sevago.mpc.domain.Lesson;
-import com.sevago.mpc.domain.Activity;
-import com.sevago.mpc.domain.Location;
-import com.sevago.mpc.domain.LessonType;
-import com.sevago.mpc.domain.Rate;
-import com.sevago.mpc.domain.Instructor;
+import com.sevago.mpc.domain.*;
 import com.sevago.mpc.repository.LessonRepository;
+import com.sevago.mpc.service.ActivityService;
 import com.sevago.mpc.service.LessonService;
 import com.sevago.mpc.repository.search.LessonSearchRepository;
+import com.sevago.mpc.service.UserService;
+import com.sevago.mpc.service.dto.ActivityDTO;
 import com.sevago.mpc.service.dto.LessonDTO;
+import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.LessonMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
 
@@ -24,6 +23,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -83,9 +86,19 @@ public class LessonResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
     private MockMvc restLessonMockMvc;
 
     private Lesson lesson;
+
+    private static UserDTO userDTO;
+
+    private static User user;
 
     @Before
     public void setup() {
@@ -248,6 +261,23 @@ public class LessonResourceIntTest {
     @Test
     @Transactional
     public void getAllLessons() throws Exception {
+        // User Login
+        userDTO = new UserDTO();
+        userDTO.setLogin("test");
+        userDTO.setEmail("test@localhost");
+        userDTO.setFirstName("test");
+        userDTO.setLastName("test");
+
+        user = userService.registerUser(userDTO, "");
+        userService.activateRegistration(user.getActivationKey());
+        UsernamePasswordAuthenticationToken authenticationToken =
+            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
+        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Set user reference
+        lesson.getTeachingInstructor().setUser(user);
+
         // Initialize the database
         lessonRepository.saveAndFlush(lesson);
 

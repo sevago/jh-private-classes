@@ -65,7 +65,8 @@ public class LessonServiceImpl implements LessonService{
     @Transactional(readOnly = true)
     public Page<LessonDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Lessons");
-        return lessonRepository.findByTeachingInstructorUserLoginOrderByDateDesc(SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new InternalServerErrorException("Current user login not found")), pageable)
+        return lessonRepository.findByTeachingInstructorUserLoginOrderByDateDesc(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+            new InternalServerErrorException("Current user login not found")), pageable)
             .map(lessonMapper::toDto);
     }
 

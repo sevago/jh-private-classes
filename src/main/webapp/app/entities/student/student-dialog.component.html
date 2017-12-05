@@ -15,7 +15,7 @@
         <div class="form-group">
             <label class="form-control-label" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
-                [(ngModel)]="student.name" required minlength="1" maxlength="70" pattern="^[A-Za-z0-9]+$"/>
+                [(ngModel)]="student.name" required minlength="1" maxlength="70" pattern="^[ A-Za-z0-9]+$"/>
             <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.name?.errors?.required">

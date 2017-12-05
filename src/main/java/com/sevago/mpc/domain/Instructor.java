@@ -30,7 +30,7 @@ public class Instructor implements Serializable {
 
     @NotNull
     @Size(min = 1, max = 70)
-    @Pattern(regexp = "^[A-Za-z0-9]+$")
+    @Pattern(regexp = "^[ A-Za-z0-9]+$")
     @Column(name = "name", length = 70, nullable = false)
     private String name;
 

@@ -15,7 +15,7 @@ entity Lesson {
 }
 
 entity Instructor {
-	name String required minlength(MIN_NAME) maxlength(MAX_NAME) pattern(/^[A-Za-z0-9]+$/),
+	name String required minlength(MIN_NAME) maxlength(MAX_NAME) pattern(/^[ A-Za-z0-9]+$/),
     address String minlength(MIN_ADDRESS) maxlength(MAX_ADDRESS),
     phoneNumber String minlength(MIN_PHONE) maxlength(MAX_PHONE),
     email String minlength(MIN_EMAIL) maxlength(MAX_EMAIL) pattern(/^[_.@A-Za-z0-9-]+$/)
@@ -27,7 +27,7 @@ entity LessonType {
 }
 
 entity Student {
-	name String required minlength(MIN_NAME) maxlength(MAX_NAME) pattern(/^[A-Za-z0-9]+$/),
+	name String required minlength(MIN_NAME) maxlength(MAX_NAME) pattern(/^[ A-Za-z0-9]+$/),
 	phoneNumber String minlength(MIN_PHONE) maxlength(MAX_PHONE),
     email String minlength(MIN_EMAIL) maxlength(MAX_EMAIL) pattern(/^[_.@A-Za-z0-9-]+$/)
 }

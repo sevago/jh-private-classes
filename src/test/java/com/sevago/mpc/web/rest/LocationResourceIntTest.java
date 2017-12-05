@@ -3,10 +3,13 @@ package com.sevago.mpc.web.rest;
 import com.sevago.mpc.PrivateclassesApp;
 
 import com.sevago.mpc.domain.Location;
+import com.sevago.mpc.domain.User;
 import com.sevago.mpc.repository.LocationRepository;
 import com.sevago.mpc.service.LocationService;
 import com.sevago.mpc.repository.search.LocationSearchRepository;
+import com.sevago.mpc.service.UserService;
 import com.sevago.mpc.service.dto.LocationDTO;
+import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.LocationMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
 
@@ -19,6 +22,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -75,9 +82,19 @@ public class LocationResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
     private MockMvc restLocationMockMvc;
 
     private Location location;
+
+    private static UserDTO userDTO;
+
+    private static User user;
 
     @Before
     public void setup() {
@@ -177,6 +194,23 @@ public class LocationResourceIntTest {
     @Test
     @Transactional
     public void getAllLocations() throws Exception {
+        // User login
+        userDTO = new UserDTO();
+        userDTO.setLogin("test");
+        userDTO.setEmail("test@localhost");
+        userDTO.setFirstName("test");
+        userDTO.setLastName("test");
+
+        user = userService.registerUser(userDTO, "");
+        userService.activateRegistration(user.getActivationKey());
+        UsernamePasswordAuthenticationToken authenticationToken =
+            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
+        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Set user reference
+        location.setUser(user);
+
         // Initialize the database
         locationRepository.saveAndFlush(location);
 

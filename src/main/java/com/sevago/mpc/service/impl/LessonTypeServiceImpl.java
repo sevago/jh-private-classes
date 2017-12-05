@@ -64,7 +64,7 @@ public class LessonTypeServiceImpl implements LessonTypeService{
     @Transactional(readOnly = true)
     public List<LessonTypeDTO> findAll() {
         log.debug("Request to get all LessonTypes");
-        return lessonTypeRepository.findAll().stream()
+        return lessonTypeRepository.findByUserIsCurrentUser().stream()
             .map(lessonTypeMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

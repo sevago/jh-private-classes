@@ -1,11 +1,13 @@
 package com.sevago.mpc.service.impl;
 
+import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.InvoiceService;
 import com.sevago.mpc.domain.Invoice;
 import com.sevago.mpc.repository.InvoiceRepository;
 import com.sevago.mpc.repository.search.InvoiceSearchRepository;
 import com.sevago.mpc.service.dto.InvoiceDTO;
 import com.sevago.mpc.service.mapper.InvoiceMapper;
+import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -63,7 +65,8 @@ public class InvoiceServiceImpl implements InvoiceService{
     @Transactional(readOnly = true)
     public Page<InvoiceDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Invoices");
-        return invoiceRepository.findAll(pageable)
+        return invoiceRepository.findByTeachingInstructorUserLoginOrderByIssueDateDesc(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+            new InternalServerErrorException("Current user login not found")), pageable)
             .map(invoiceMapper::toDto);
     }
 

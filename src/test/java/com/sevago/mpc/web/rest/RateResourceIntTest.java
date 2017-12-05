@@ -3,10 +3,13 @@ package com.sevago.mpc.web.rest;
 import com.sevago.mpc.PrivateclassesApp;
 
 import com.sevago.mpc.domain.Rate;
+import com.sevago.mpc.domain.User;
 import com.sevago.mpc.repository.RateRepository;
 import com.sevago.mpc.service.RateService;
 import com.sevago.mpc.repository.search.RateSearchRepository;
+import com.sevago.mpc.service.UserService;
 import com.sevago.mpc.service.dto.RateDTO;
+import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.RateMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
 
@@ -19,6 +22,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -81,9 +88,19 @@ public class RateResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
     private MockMvc restRateMockMvc;
 
     private Rate rate;
+
+    private static UserDTO userDTO;
+
+    private static User user;
 
     @Before
     public void setup() {
@@ -204,6 +221,23 @@ public class RateResourceIntTest {
     @Test
     @Transactional
     public void getAllRates() throws Exception {
+        // User login
+        userDTO = new UserDTO();
+        userDTO.setLogin("test");
+        userDTO.setEmail("test@localhost");
+        userDTO.setFirstName("test");
+        userDTO.setLastName("test");
+
+        user = userService.registerUser(userDTO, "");
+        userService.activateRegistration(user.getActivationKey());
+        UsernamePasswordAuthenticationToken authenticationToken =
+            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
+        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Set user reference
+        rate.setUser(user);
+
         // Initialize the database
         rateRepository.saveAndFlush(rate);
 

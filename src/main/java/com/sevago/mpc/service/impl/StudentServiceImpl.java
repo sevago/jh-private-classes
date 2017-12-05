@@ -1,11 +1,13 @@
 package com.sevago.mpc.service.impl;
 
+import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.StudentService;
 import com.sevago.mpc.domain.Student;
 import com.sevago.mpc.repository.StudentRepository;
 import com.sevago.mpc.repository.search.StudentSearchRepository;
 import com.sevago.mpc.service.dto.StudentDTO;
 import com.sevago.mpc.service.mapper.StudentMapper;
+import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -63,7 +65,8 @@ public class StudentServiceImpl implements StudentService{
     @Transactional(readOnly = true)
     public Page<StudentDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Students");
-        return studentRepository.findAll(pageable)
+        return studentRepository.findByUserLoginOrderByName(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+            new InternalServerErrorException("Current user login not found")), pageable)
             .map(studentMapper::toDto);
     }
 

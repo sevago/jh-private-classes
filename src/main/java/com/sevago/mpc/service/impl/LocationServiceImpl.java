@@ -64,7 +64,7 @@ public class LocationServiceImpl implements LocationService{
     @Transactional(readOnly = true)
     public List<LocationDTO> findAll() {
         log.debug("Request to get all Locations");
-        return locationRepository.findAll().stream()
+        return locationRepository.findByUserIsCurrentUser().stream()
             .map(locationMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

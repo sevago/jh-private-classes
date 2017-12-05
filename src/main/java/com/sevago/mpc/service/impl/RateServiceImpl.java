@@ -64,7 +64,7 @@ public class RateServiceImpl implements RateService{
     @Transactional(readOnly = true)
     public List<RateDTO> findAll() {
         log.debug("Request to get all Rates");
-        return rateRepository.findAll().stream()
+        return rateRepository.findByUserIsCurrentUser().stream()
             .map(rateMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

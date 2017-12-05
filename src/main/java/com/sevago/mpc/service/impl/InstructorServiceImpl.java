@@ -64,7 +64,7 @@ public class InstructorServiceImpl implements InstructorService{
     @Transactional(readOnly = true)
     public List<InstructorDTO> findAll() {
         log.debug("Request to get all Instructors");
-        return instructorRepository.findAllWithEagerRelationships().stream()
+        return instructorRepository.findByUserIsCurrentUser().stream()
             .map(instructorMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

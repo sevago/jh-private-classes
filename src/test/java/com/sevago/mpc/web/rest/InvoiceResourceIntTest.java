@@ -5,10 +5,13 @@ import com.sevago.mpc.PrivateclassesApp;
 import com.sevago.mpc.domain.Invoice;
 import com.sevago.mpc.domain.Student;
 import com.sevago.mpc.domain.Instructor;
+import com.sevago.mpc.domain.User;
 import com.sevago.mpc.repository.InvoiceRepository;
 import com.sevago.mpc.service.InvoiceService;
 import com.sevago.mpc.repository.search.InvoiceSearchRepository;
+import com.sevago.mpc.service.UserService;
 import com.sevago.mpc.service.dto.InvoiceDTO;
+import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.InvoiceMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
 
@@ -21,6 +24,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -93,9 +100,19 @@ public class InvoiceResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
     private MockMvc restInvoiceMockMvc;
 
     private Invoice invoice;
+
+    private static UserDTO userDTO;
+
+    private static User user;
 
     @Before
     public void setup() {
@@ -289,6 +306,23 @@ public class InvoiceResourceIntTest {
     @Test
     @Transactional
     public void getAllInvoices() throws Exception {
+        // User Login
+        userDTO = new UserDTO();
+        userDTO.setLogin("test");
+        userDTO.setEmail("test@localhost");
+        userDTO.setFirstName("test");
+        userDTO.setLastName("test");
+
+        user = userService.registerUser(userDTO, "");
+        userService.activateRegistration(user.getActivationKey());
+        UsernamePasswordAuthenticationToken authenticationToken =
+            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
+        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Set user reference
+        invoice.getTeachingInstructor().setUser(user);
+
         // Initialize the database
         invoiceRepository.saveAndFlush(invoice);
 

@@ -11,4 +11,26 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
 
+    private final ApplicationProperties.Elasticsearch elasticsearch = new ApplicationProperties.Elasticsearch();
+
+    public ApplicationProperties() {}
+
+    public ApplicationProperties.Elasticsearch getElasticsearch() { return this.elasticsearch; }
+
+    public static class Elasticsearch {
+
+        private Boolean enabled = true;
+
+        public Elasticsearch() {
+        }
+
+        public boolean isEnabled() {
+            return this.enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
 }

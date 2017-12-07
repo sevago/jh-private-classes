@@ -1,5 +1,6 @@
 package com.sevago.mpc.service.impl;
 
+import com.sevago.mpc.config.ApplicationProperties;
 import com.sevago.mpc.service.ActivityService;
 import com.sevago.mpc.domain.Activity;
 import com.sevago.mpc.repository.ActivityRepository;
@@ -33,10 +34,13 @@ public class ActivityServiceImpl implements ActivityService{
 
     private final ActivitySearchRepository activitySearchRepository;
 
-    public ActivityServiceImpl(ActivityRepository activityRepository, ActivityMapper activityMapper, ActivitySearchRepository activitySearchRepository) {
+    private final ApplicationProperties applicationProperties;
+
+    public ActivityServiceImpl(ActivityRepository activityRepository, ActivityMapper activityMapper, ActivitySearchRepository activitySearchRepository, ApplicationProperties applicationProperties) {
         this.activityRepository = activityRepository;
         this.activityMapper = activityMapper;
         this.activitySearchRepository = activitySearchRepository;
+        this.applicationProperties = applicationProperties;
     }
 
     /**
@@ -51,7 +55,9 @@ public class ActivityServiceImpl implements ActivityService{
         Activity activity = activityMapper.toEntity(activityDTO);
         activity = activityRepository.save(activity);
         ActivityDTO result = activityMapper.toDto(activity);
-        activitySearchRepository.save(activity);
+        if (applicationProperties.getElasticsearch().isEnabled()) {
+            activitySearchRepository.save(activity);
+        }
         return result;
     }
 

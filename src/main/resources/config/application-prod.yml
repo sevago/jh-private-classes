@@ -135,3 +135,5 @@ jhipster:
 # ===================================================================
 
 application:
+    elasticsearch:
+        enabled: false

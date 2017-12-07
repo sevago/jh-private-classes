@@ -2,16 +2,10 @@ package com.sevago.mpc.service;
 
 import com.sevago.mpc.PrivateclassesApp;
 import com.sevago.mpc.domain.*;
-import com.sevago.mpc.repository.ActivityRepository;
-import com.sevago.mpc.repository.InstructorRepository;
-import com.sevago.mpc.repository.InvoiceRepository;
-import com.sevago.mpc.repository.LessonRepository;
+import com.sevago.mpc.repository.*;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.dto.*;
-import com.sevago.mpc.web.rest.ActivityResourceIntTest;
-import com.sevago.mpc.web.rest.InstructorResourceIntTest;
-import com.sevago.mpc.web.rest.InvoiceResourceIntTest;
-import com.sevago.mpc.web.rest.LessonResourceIntTest;
+import com.sevago.mpc.web.rest.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,6 +67,25 @@ public class ServicesCommonIntegrationTest {
     @Autowired
     private LessonService lessonService;
 
+    @Autowired
+    private LessonTypeRepository lessonTypeRepository;
+    @Autowired
+    private LessonTypeService lessonTypeService;
+
+    @Autowired
+    private LocationRepository locationRepository;
+    @Autowired
+    private LocationService locationService;
+
+    @Autowired
+    private RateRepository rateRepository;
+    @Autowired
+    private RateService rateService;
+
+    @Autowired
+    private StudentRepository studentRepository;
+    @Autowired
+    private StudentService studentService;
 
     @Before
     public void setUp() throws Exception {
@@ -182,5 +195,85 @@ public class ServicesCommonIntegrationTest {
         assertThat(lessons).isNotNull();
         assertThat(lessons.getContent().get(0).getDuration()).isEqualTo(lessonOne.getDuration());
         assertThat(lessons.getContent().size()).isOne();
+    }
+
+    @Test
+    @Transactional
+    public void assertThatFindAllLessonTypesCanFindByCurrentUser() throws Exception {
+        //given
+        LessonType lessonTypeOne = LessonTypeResourceIntTest.createEntity(em);
+        lessonTypeOne.setUser(user);
+        lessonTypeRepository.saveAndFlush(lessonTypeOne);
+        LessonType lessonTypeTwo = LessonTypeResourceIntTest.createEntity(em);
+        lessonTypeTwo.setDescription(NAME_ONE);
+        lessonTypeRepository.saveAndFlush(lessonTypeTwo);
+
+        //when
+        List<LessonTypeDTO> lessonTypes = lessonTypeService.findAll();
+
+        //then
+        assertThat(lessonTypes).isNotNull();
+        assertThat(lessonTypes.get(0).getDescription()).isEqualTo(lessonTypeOne.getDescription());
+        assertThat(lessonTypes.size()).isOne();
+    }
+
+    @Test
+    @Transactional
+    public void assertThatFindAllLocationsCanFindByCurrentUser() throws Exception {
+        //given
+        Location locationOne = LocationResourceIntTest.createEntity(em);
+        locationOne.setUser(user);
+        locationRepository.saveAndFlush(locationOne);
+        Location locationTwo = LocationResourceIntTest.createEntity(em);
+        locationTwo.setName(NAME_ONE);
+        locationRepository.saveAndFlush(locationTwo);
+
+        //when
+        List<LocationDTO> locations = locationService.findAll();
+
+        //then
+        assertThat(locations).isNotNull();
+        assertThat(locations.get(0).getName()).isEqualTo(locationOne.getName());
+        assertThat(locations.size()).isOne();
+    }
+
+    @Test
+    @Transactional
+    public void assertThatFindAllRatesCanFindByCurrentUser() throws Exception {
+        //given
+        Rate rateOne = RateResourceIntTest.createEntity(em);
+        rateOne.setUser(user);
+        rateRepository.saveAndFlush(rateOne);
+        Rate rateTwo = RateResourceIntTest.createEntity(em);
+        rateTwo.setDescription(NAME_ONE);
+        rateRepository.saveAndFlush(rateTwo);
+
+        //when
+        List<RateDTO> rates = rateService.findAll();
+
+        //then
+        assertThat(rates).isNotNull();
+        assertThat(rates.get(0).getDescription()).isEqualTo(rateOne.getDescription());
+        assertThat(rates.size()).isOne();
+    }
+
+    @Test
+    @Transactional
+    public void assertThatFindAllStudentsCanFindByCurrentUser() throws Exception {
+        //given
+        Student studentOne = StudentResourceIntTest.createEntity(em);
+        studentOne.setUser(user);
+        studentRepository.saveAndFlush(studentOne);
+        Student studentTwo = StudentResourceIntTest.createEntity(em);
+        studentTwo.setName(NAME_ONE);
+        studentRepository.saveAndFlush(studentTwo);
+
+        //when
+        Page<StudentDTO> students = studentService.findAll(new PageRequest(0, 10));
+
+        //then
+        assertThat(students).isNotNull();
+        assertThat(students.getContent().get(0).getName()).isEqualTo(studentOne.getName());
+        assertThat(students.getContent().size()).isOne();
     }
 }

@@ -1,5 +1,6 @@
 package com.sevago.mpc.web.rest;
 
+import com.sevago.mpc.config.ApplicationProperties;
 import com.sevago.mpc.config.DefaultProfileUtil;
 
 import io.github.jhipster.config.JHipsterProperties;
@@ -22,15 +23,18 @@ public class ProfileInfoResource {
 
     private final JHipsterProperties jHipsterProperties;
 
-    public ProfileInfoResource(Environment env, JHipsterProperties jHipsterProperties) {
+    private final ApplicationProperties applicationProperties;
+
+    public ProfileInfoResource(Environment env, JHipsterProperties jHipsterProperties, ApplicationProperties applicationProperties) {
         this.env = env;
         this.jHipsterProperties = jHipsterProperties;
+        this.applicationProperties = applicationProperties;
     }
 
     @GetMapping("/profile-info")
     public ProfileInfoVM getActiveProfiles() {
         String[] activeProfiles = DefaultProfileUtil.getActiveProfiles(env);
-        return new ProfileInfoVM(activeProfiles, getRibbonEnv(activeProfiles));
+        return new ProfileInfoVM(activeProfiles, getRibbonEnv(activeProfiles), applicationProperties.getElasticsearch().isEnabled());
     }
 
     private String getRibbonEnv(String[] activeProfiles) {
@@ -53,9 +57,12 @@ public class ProfileInfoResource {
 
         private String ribbonEnv;
 
-        ProfileInfoVM(String[] activeProfiles, String ribbonEnv) {
+        private boolean elasticsearchEnabled;
+
+        ProfileInfoVM(String[] activeProfiles, String ribbonEnv, boolean elasticsearchEnabled) {
             this.activeProfiles = activeProfiles;
             this.ribbonEnv = ribbonEnv;
+            this.elasticsearchEnabled = elasticsearchEnabled;
         }
 
         public String[] getActiveProfiles() {
@@ -65,5 +72,7 @@ public class ProfileInfoResource {
         public String getRibbonEnv() {
             return ribbonEnv;
         }
+
+        public boolean isElasticsearchEnabled() { return elasticsearchEnabled; }
     }
 }

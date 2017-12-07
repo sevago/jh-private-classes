@@ -1,5 +1,6 @@
 package com.sevago.mpc.web.rest;
 
+import com.sevago.mpc.config.ApplicationProperties;
 import io.github.jhipster.config.JHipsterProperties;
 import com.sevago.mpc.PrivateclassesApp;
 import org.junit.Before;
@@ -36,6 +37,8 @@ public class ProfileInfoResourceIntTest {
 
     private MockMvc restProfileMockMvc;
 
+    private ApplicationProperties applicationProperties;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -48,7 +51,7 @@ public class ProfileInfoResourceIntTest {
         when(environment.getDefaultProfiles()).thenReturn(activeProfiles);
         when(environment.getActiveProfiles()).thenReturn(activeProfiles);
 
-        ProfileInfoResource profileInfoResource = new ProfileInfoResource(environment, jHipsterProperties);
+        ProfileInfoResource profileInfoResource = new ProfileInfoResource(environment, jHipsterProperties, applicationProperties);
         this.restProfileMockMvc = MockMvcBuilders
             .standaloneSetup(profileInfoResource)
             .build();

@@ -98,7 +98,9 @@ public class ActivityServiceImpl implements ActivityService{
     public void delete(Long id) {
         log.debug("Request to delete Activity : {}", id);
         activityRepository.delete(id);
-        activitySearchRepository.delete(id);
+        if (applicationProperties.getElasticsearch().isEnabled()){
+            activitySearchRepository.delete(id);
+        }
     }
 
     /**

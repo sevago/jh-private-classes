@@ -73,6 +73,6 @@ public class ProfileInfoResource {
             return ribbonEnv;
         }
 
-        public boolean isElasticsearchEnabled() { return elasticsearchEnabled; }
+        public boolean getElasticsearchEnabled() { return elasticsearchEnabled; }
     }
 }

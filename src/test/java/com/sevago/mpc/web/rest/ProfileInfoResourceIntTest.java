@@ -4,6 +4,7 @@ import com.sevago.mpc.config.ApplicationProperties;
 import io.github.jhipster.config.JHipsterProperties;
 import com.sevago.mpc.PrivateclassesApp;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -35,9 +37,10 @@ public class ProfileInfoResourceIntTest {
     @Mock
     private JHipsterProperties jHipsterProperties;
 
-    private MockMvc restProfileMockMvc;
-
+    @Mock
     private ApplicationProperties applicationProperties;
+
+    private MockMvc restProfileMockMvc;
 
     @Before
     public void setup() {
@@ -48,8 +51,12 @@ public class ProfileInfoResourceIntTest {
         when(jHipsterProperties.getRibbon()).thenReturn(ribbon);
 
         String activeProfiles[] = {"test"};
+
         when(environment.getDefaultProfiles()).thenReturn(activeProfiles);
         when(environment.getActiveProfiles()).thenReturn(activeProfiles);
+
+        ApplicationProperties.Elasticsearch elasticsearch = new ApplicationProperties.Elasticsearch();
+        when(applicationProperties.getElasticsearch()).thenReturn(elasticsearch);
 
         ProfileInfoResource profileInfoResource = new ProfileInfoResource(environment, jHipsterProperties, applicationProperties);
         this.restProfileMockMvc = MockMvcBuilders
@@ -84,5 +91,20 @@ public class ProfileInfoResourceIntTest {
         restProfileMockMvc.perform(get("/api/profile-info"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+    }
+
+    @Test
+    public void getProfileInfoWithElasticsearchEnabledFlag() throws Exception {
+        //given
+        ApplicationProperties.Elasticsearch elasticsearch = new ApplicationProperties.Elasticsearch();
+
+        //when
+        when(applicationProperties.getElasticsearch()).thenReturn(elasticsearch);
+
+        //then
+        restProfileMockMvc.perform(get("/api/profile-info"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.elasticsearchEnabled").value(true));
     }
 }

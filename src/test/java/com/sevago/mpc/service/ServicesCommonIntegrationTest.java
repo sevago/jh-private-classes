@@ -117,25 +117,7 @@ public class ServicesCommonIntegrationTest {
         assertThat(SecurityUtils.getCurrentUserLogin()).isPresent();
     }
 
-    @Test
-    @Transactional
-    public void assertThatFindAllActivitiesCanFindByCurrentUser() throws Exception {
-        //given
-        Activity activityOne = ActivityResourceIntTest.createEntity(em);
-        activityOne.setUser(user);
-        activityRepository.saveAndFlush(activityOne);
-        Activity activityTwo = ActivityResourceIntTest.createEntity(em);
-        activityTwo.setName(NAME_TWO);
-        activityRepository.saveAndFlush(activityTwo);
 
-        //when
-        List<ActivityDTO> activities = activityService.findAll();
-
-        //then
-        assertThat(activities).isNotNull();
-        assertThat(activities.get(0).getName()).isEqualTo(activityOne.getName());
-        assertThat(activities.size()).isOne();
-    }
 
     @Test
     @Transactional

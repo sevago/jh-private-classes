@@ -87,9 +87,7 @@ public class ActivityResourceIntTest {
 
     private Activity activity;
 
-    private static UserDTO userDTO;
-
-    private static User user;
+    private User user;
 
     @Before
     public void setup() {
@@ -115,10 +113,28 @@ public class ActivityResourceIntTest {
         return activity;
     }
 
+    public static User userAuthentication(UserService userService, AuthenticationManager authenticationManager) {
+        // User login
+        UserDTO userDTO = new UserDTO();
+        userDTO.setLogin("test");
+        userDTO.setEmail("test@localhost");
+        userDTO.setFirstName("test");
+        userDTO.setLastName("test");
+
+        User user = userService.registerUser(userDTO, "");
+        userService.activateRegistration(user.getActivationKey());
+        UsernamePasswordAuthenticationToken authenticationToken =
+            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return user;
+    }
+
     @Before
     public void initTest() {
         activitySearchRepository.deleteAll();
         activity = createEntity(em);
+        user = userAuthentication(userService, authenticationManager);
     }
 
     @Test
@@ -187,20 +203,6 @@ public class ActivityResourceIntTest {
     @Test
     @Transactional
     public void getAllActivities() throws Exception {
-        // User login
-        userDTO = new UserDTO();
-        userDTO.setLogin("test");
-        userDTO.setEmail("test@localhost");
-        userDTO.setFirstName("test");
-        userDTO.setLastName("test");
-
-        user = userService.registerUser(userDTO, "");
-        userService.activateRegistration(user.getActivationKey());
-        UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
-        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // Set user reference
         activity.setUser(user);
 

@@ -146,4 +146,4 @@ jhipster:
 
 application:
     elasticsearch:
-        enabled: false
+        enabled: true

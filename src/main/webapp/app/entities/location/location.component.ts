@@ -6,6 +6,7 @@ import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 import { Location } from './location.model';
 import { LocationService } from './location.service';
 import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
+import {ProfileService} from '../../layouts';
 
 @Component({
     selector: 'jhi-location',
@@ -16,13 +17,15 @@ locations: Location[];
     currentAccount: any;
     eventSubscriber: Subscription;
     currentSearch: string;
+    elasticsearchEnabled: boolean;
 
     constructor(
         private locationService: LocationService,
         private jhiAlertService: JhiAlertService,
         private eventManager: JhiEventManager,
         private activatedRoute: ActivatedRoute,
-        private principal: Principal
+        private principal: Principal,
+        private profileService: ProfileService
     ) {
         this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
     }
@@ -64,6 +67,7 @@ locations: Location[];
             this.currentAccount = account;
         });
         this.registerChangeInLocations();
+        this.getElasticsearchEnabled();
     }
 
     ngOnDestroy() {
@@ -79,5 +83,11 @@ locations: Location[];
 
     private onError(error) {
         this.jhiAlertService.error(error.message, null, null);
+    }
+
+    getElasticsearchEnabled() {
+        this.profileService.getProfileInfo().then((profileInfo) => {
+            this.elasticsearchEnabled = profileInfo.elasticsearchEnabled;
+        });
     }
 }

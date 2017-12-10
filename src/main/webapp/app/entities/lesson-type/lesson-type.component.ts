@@ -6,6 +6,7 @@ import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 import { LessonType } from './lesson-type.model';
 import { LessonTypeService } from './lesson-type.service';
 import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
+import {ProfileService} from '../../layouts';
 
 @Component({
     selector: 'jhi-lesson-type',
@@ -16,13 +17,15 @@ lessonTypes: LessonType[];
     currentAccount: any;
     eventSubscriber: Subscription;
     currentSearch: string;
+    elasticsearchEnabled: boolean;
 
     constructor(
         private lessonTypeService: LessonTypeService,
         private jhiAlertService: JhiAlertService,
         private eventManager: JhiEventManager,
         private activatedRoute: ActivatedRoute,
-        private principal: Principal
+        private principal: Principal,
+        private profileService: ProfileService
     ) {
         this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
     }
@@ -64,6 +67,7 @@ lessonTypes: LessonType[];
             this.currentAccount = account;
         });
         this.registerChangeInLessonTypes();
+        this.getElasticsearchEnabled();
     }
 
     ngOnDestroy() {
@@ -79,5 +83,11 @@ lessonTypes: LessonType[];
 
     private onError(error) {
         this.jhiAlertService.error(error.message, null, null);
+    }
+
+    getElasticsearchEnabled() {
+        this.profileService.getProfileInfo().then((profileInfo) => {
+            this.elasticsearchEnabled = profileInfo.elasticsearchEnabled;
+        });
     }
 }

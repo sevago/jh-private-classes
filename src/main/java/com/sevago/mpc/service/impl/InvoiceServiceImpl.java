@@ -1,5 +1,6 @@
 package com.sevago.mpc.service.impl;
 
+import com.sevago.mpc.config.ApplicationProperties;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.InvoiceService;
 import com.sevago.mpc.domain.Invoice;
@@ -33,10 +34,13 @@ public class InvoiceServiceImpl implements InvoiceService{
 
     private final InvoiceSearchRepository invoiceSearchRepository;
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceMapper invoiceMapper, InvoiceSearchRepository invoiceSearchRepository) {
+    private final ApplicationProperties applicationProperties;
+
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceMapper invoiceMapper, InvoiceSearchRepository invoiceSearchRepository, ApplicationProperties applicationProperties) {
         this.invoiceRepository = invoiceRepository;
         this.invoiceMapper = invoiceMapper;
         this.invoiceSearchRepository = invoiceSearchRepository;
+        this.applicationProperties = applicationProperties;
     }
 
     /**
@@ -51,7 +55,9 @@ public class InvoiceServiceImpl implements InvoiceService{
         Invoice invoice = invoiceMapper.toEntity(invoiceDTO);
         invoice = invoiceRepository.save(invoice);
         InvoiceDTO result = invoiceMapper.toDto(invoice);
-        invoiceSearchRepository.save(invoice);
+        if (applicationProperties.getElasticsearch().isEnabled()) {
+            invoiceSearchRepository.save(invoice);
+        }
         return result;
     }
 
@@ -93,7 +99,9 @@ public class InvoiceServiceImpl implements InvoiceService{
     public void delete(Long id) {
         log.debug("Request to delete Invoice : {}", id);
         invoiceRepository.delete(id);
-        invoiceSearchRepository.delete(id);
+        if (applicationProperties.getElasticsearch().isEnabled()){
+            invoiceSearchRepository.delete(id);
+        }
     }
 
     /**

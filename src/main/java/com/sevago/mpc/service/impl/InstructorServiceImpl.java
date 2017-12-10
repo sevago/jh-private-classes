@@ -1,5 +1,6 @@
 package com.sevago.mpc.service.impl;
 
+import com.sevago.mpc.config.ApplicationProperties;
 import com.sevago.mpc.service.InstructorService;
 import com.sevago.mpc.domain.Instructor;
 import com.sevago.mpc.repository.InstructorRepository;
@@ -33,10 +34,13 @@ public class InstructorServiceImpl implements InstructorService{
 
     private final InstructorSearchRepository instructorSearchRepository;
 
-    public InstructorServiceImpl(InstructorRepository instructorRepository, InstructorMapper instructorMapper, InstructorSearchRepository instructorSearchRepository) {
+    private final ApplicationProperties applicationProperties;
+
+    public InstructorServiceImpl(InstructorRepository instructorRepository, InstructorMapper instructorMapper, InstructorSearchRepository instructorSearchRepository, ApplicationProperties applicationProperties) {
         this.instructorRepository = instructorRepository;
         this.instructorMapper = instructorMapper;
         this.instructorSearchRepository = instructorSearchRepository;
+        this.applicationProperties = applicationProperties;
     }
 
     /**
@@ -51,7 +55,9 @@ public class InstructorServiceImpl implements InstructorService{
         Instructor instructor = instructorMapper.toEntity(instructorDTO);
         instructor = instructorRepository.save(instructor);
         InstructorDTO result = instructorMapper.toDto(instructor);
-        instructorSearchRepository.save(instructor);
+        if (applicationProperties.getElasticsearch().isEnabled()) {
+            instructorSearchRepository.save(instructor);
+        }
         return result;
     }
 
@@ -92,7 +98,9 @@ public class InstructorServiceImpl implements InstructorService{
     public void delete(Long id) {
         log.debug("Request to delete Instructor : {}", id);
         instructorRepository.delete(id);
-        instructorSearchRepository.delete(id);
+        if (applicationProperties.getElasticsearch().isEnabled()){
+            instructorSearchRepository.delete(id);
+        }
     }
 
     /**

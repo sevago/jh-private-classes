@@ -1,5 +1,6 @@
 package com.sevago.mpc.service.impl;
 
+import com.sevago.mpc.config.ApplicationProperties;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.LessonService;
 import com.sevago.mpc.domain.Lesson;
@@ -33,10 +34,13 @@ public class LessonServiceImpl implements LessonService{
 
     private final LessonSearchRepository lessonSearchRepository;
 
-    public LessonServiceImpl(LessonRepository lessonRepository, LessonMapper lessonMapper, LessonSearchRepository lessonSearchRepository) {
+    private final ApplicationProperties applicationProperties;
+
+    public LessonServiceImpl(LessonRepository lessonRepository, LessonMapper lessonMapper, LessonSearchRepository lessonSearchRepository, ApplicationProperties applicationProperties) {
         this.lessonRepository = lessonRepository;
         this.lessonMapper = lessonMapper;
         this.lessonSearchRepository = lessonSearchRepository;
+        this.applicationProperties = applicationProperties;
     }
 
     /**
@@ -51,7 +55,9 @@ public class LessonServiceImpl implements LessonService{
         Lesson lesson = lessonMapper.toEntity(lessonDTO);
         lesson = lessonRepository.save(lesson);
         LessonDTO result = lessonMapper.toDto(lesson);
-        lessonSearchRepository.save(lesson);
+        if (applicationProperties.getElasticsearch().isEnabled()) {
+            lessonSearchRepository.save(lesson);
+        }
         return result;
     }
 
@@ -93,7 +99,9 @@ public class LessonServiceImpl implements LessonService{
     public void delete(Long id) {
         log.debug("Request to delete Lesson : {}", id);
         lessonRepository.delete(id);
-        lessonSearchRepository.delete(id);
+        if (applicationProperties.getElasticsearch().isEnabled()){
+            lessonSearchRepository.delete(id);
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.sevago.mpc.service.impl;
 
+import com.sevago.mpc.config.ApplicationProperties;
 import com.sevago.mpc.service.LessonTypeService;
 import com.sevago.mpc.domain.LessonType;
 import com.sevago.mpc.repository.LessonTypeRepository;
@@ -33,10 +34,13 @@ public class LessonTypeServiceImpl implements LessonTypeService{
 
     private final LessonTypeSearchRepository lessonTypeSearchRepository;
 
-    public LessonTypeServiceImpl(LessonTypeRepository lessonTypeRepository, LessonTypeMapper lessonTypeMapper, LessonTypeSearchRepository lessonTypeSearchRepository) {
+    private final ApplicationProperties applicationProperties;
+
+    public LessonTypeServiceImpl(LessonTypeRepository lessonTypeRepository, LessonTypeMapper lessonTypeMapper, LessonTypeSearchRepository lessonTypeSearchRepository, ApplicationProperties applicationProperties) {
         this.lessonTypeRepository = lessonTypeRepository;
         this.lessonTypeMapper = lessonTypeMapper;
         this.lessonTypeSearchRepository = lessonTypeSearchRepository;
+        this.applicationProperties = applicationProperties;
     }
 
     /**
@@ -51,7 +55,9 @@ public class LessonTypeServiceImpl implements LessonTypeService{
         LessonType lessonType = lessonTypeMapper.toEntity(lessonTypeDTO);
         lessonType = lessonTypeRepository.save(lessonType);
         LessonTypeDTO result = lessonTypeMapper.toDto(lessonType);
-        lessonTypeSearchRepository.save(lessonType);
+        if (applicationProperties.getElasticsearch().isEnabled()) {
+            lessonTypeSearchRepository.save(lessonType);
+        }
         return result;
     }
 
@@ -92,7 +98,9 @@ public class LessonTypeServiceImpl implements LessonTypeService{
     public void delete(Long id) {
         log.debug("Request to delete LessonType : {}", id);
         lessonTypeRepository.delete(id);
-        lessonTypeSearchRepository.delete(id);
+        if (applicationProperties.getElasticsearch().isEnabled()){
+            lessonTypeSearchRepository.delete(id);
+        }
     }
 
     /**

@@ -12,31 +12,23 @@ import com.sevago.mpc.service.UserService;
 import com.sevago.mpc.service.dto.ActivityDTO;
 import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.ActivityMapper;
-import com.sevago.mpc.web.rest.ActivityResource;
 import com.sevago.mpc.web.rest.ActivityResourceIntTest;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PrivateclassesApp.class)
@@ -78,10 +70,12 @@ public class ActivityServiceImplTest {
     public void setUp() throws Exception {
         applicationProperties.getElasticsearch().setEnabled(false);
         user = ActivityResourceIntTest.userAuthentication(userService, authenticationManager);
+
     }
 
     @After
     public void tearDown() throws Exception {
+        applicationProperties.getElasticsearch().setEnabled(true);
         activityRepository.deleteAll();
         userService.deleteUser(USER);
     }
@@ -119,12 +113,12 @@ public class ActivityServiceImplTest {
         activityRepository.saveAndFlush(activityTwo);
 
         //when
-        List<ActivityDTO> activities = activityService.findAll();
+        List<ActivityDTO> activityList = activityService.findAll();
 
         //then
-        assertThat(activities).isNotNull();
-        assertThat(activities.get(0).getName()).isEqualTo(activityOne.getName());
-        assertThat(activities.size()).isOne();
+        assertThat(activityList).isNotNull();
+        assertThat(activityList.get(0).getName()).isEqualTo(activityOne.getName());
+        assertThat(activityList.size()).isOne();
     }
 
     @Test
@@ -132,7 +126,7 @@ public class ActivityServiceImplTest {
         //given
         Activity activityOne = ActivityResourceIntTest.createEntity(em);
         activityOne.setUser(user);
-        activityRepository.saveAndFlush(activityOne);;
+        activityRepository.saveAndFlush(activityOne);
         activitySearchRepository.save(activityOne);
         int sizeBeforeDelete = activityRepository.findAll().size();
 

@@ -1,5 +1,6 @@
 package com.sevago.mpc.service.impl;
 
+import com.sevago.mpc.config.ApplicationProperties;
 import com.sevago.mpc.service.RateService;
 import com.sevago.mpc.domain.Rate;
 import com.sevago.mpc.repository.RateRepository;
@@ -33,10 +34,13 @@ public class RateServiceImpl implements RateService{
 
     private final RateSearchRepository rateSearchRepository;
 
-    public RateServiceImpl(RateRepository rateRepository, RateMapper rateMapper, RateSearchRepository rateSearchRepository) {
+    private final ApplicationProperties applicationProperties;
+
+    public RateServiceImpl(RateRepository rateRepository, RateMapper rateMapper, RateSearchRepository rateSearchRepository, ApplicationProperties applicationProperties) {
         this.rateRepository = rateRepository;
         this.rateMapper = rateMapper;
         this.rateSearchRepository = rateSearchRepository;
+        this.applicationProperties = applicationProperties;
     }
 
     /**
@@ -51,7 +55,9 @@ public class RateServiceImpl implements RateService{
         Rate rate = rateMapper.toEntity(rateDTO);
         rate = rateRepository.save(rate);
         RateDTO result = rateMapper.toDto(rate);
-        rateSearchRepository.save(rate);
+        if (applicationProperties.getElasticsearch().isEnabled()) {
+            rateSearchRepository.save(rate);
+        }
         return result;
     }
 
@@ -92,7 +98,9 @@ public class RateServiceImpl implements RateService{
     public void delete(Long id) {
         log.debug("Request to delete Rate : {}", id);
         rateRepository.delete(id);
-        rateSearchRepository.delete(id);
+        if (applicationProperties.getElasticsearch().isEnabled()){
+            rateSearchRepository.delete(id);
+        }
     }
 
     /**

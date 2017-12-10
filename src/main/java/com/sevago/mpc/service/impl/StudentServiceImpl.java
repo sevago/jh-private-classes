@@ -1,5 +1,6 @@
 package com.sevago.mpc.service.impl;
 
+import com.sevago.mpc.config.ApplicationProperties;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.StudentService;
 import com.sevago.mpc.domain.Student;
@@ -33,10 +34,13 @@ public class StudentServiceImpl implements StudentService{
 
     private final StudentSearchRepository studentSearchRepository;
 
-    public StudentServiceImpl(StudentRepository studentRepository, StudentMapper studentMapper, StudentSearchRepository studentSearchRepository) {
+    private final ApplicationProperties applicationProperties;
+
+    public StudentServiceImpl(StudentRepository studentRepository, StudentMapper studentMapper, StudentSearchRepository studentSearchRepository, ApplicationProperties applicationProperties) {
         this.studentRepository = studentRepository;
         this.studentMapper = studentMapper;
         this.studentSearchRepository = studentSearchRepository;
+        this.applicationProperties = applicationProperties;
     }
 
     /**
@@ -51,7 +55,9 @@ public class StudentServiceImpl implements StudentService{
         Student student = studentMapper.toEntity(studentDTO);
         student = studentRepository.save(student);
         StudentDTO result = studentMapper.toDto(student);
-        studentSearchRepository.save(student);
+        if (applicationProperties.getElasticsearch().isEnabled()) {
+            studentSearchRepository.save(student);
+        }
         return result;
     }
 
@@ -93,7 +99,9 @@ public class StudentServiceImpl implements StudentService{
     public void delete(Long id) {
         log.debug("Request to delete Student : {}", id);
         studentRepository.delete(id);
-        studentSearchRepository.delete(id);
+        if (applicationProperties.getElasticsearch().isEnabled()){
+            studentSearchRepository.delete(id);
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.sevago.mpc.service.impl;
 
+import com.sevago.mpc.config.ApplicationProperties;
 import com.sevago.mpc.service.LocationService;
 import com.sevago.mpc.domain.Location;
 import com.sevago.mpc.repository.LocationRepository;
@@ -33,10 +34,13 @@ public class LocationServiceImpl implements LocationService{
 
     private final LocationSearchRepository locationSearchRepository;
 
-    public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper, LocationSearchRepository locationSearchRepository) {
+    private final ApplicationProperties applicationProperties;
+
+    public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper, LocationSearchRepository locationSearchRepository, ApplicationProperties applicationProperties) {
         this.locationRepository = locationRepository;
         this.locationMapper = locationMapper;
         this.locationSearchRepository = locationSearchRepository;
+        this.applicationProperties = applicationProperties;
     }
 
     /**
@@ -51,7 +55,9 @@ public class LocationServiceImpl implements LocationService{
         Location location = locationMapper.toEntity(locationDTO);
         location = locationRepository.save(location);
         LocationDTO result = locationMapper.toDto(location);
-        locationSearchRepository.save(location);
+        if (applicationProperties.getElasticsearch().isEnabled()) {
+            locationSearchRepository.save(location);
+        }
         return result;
     }
 
@@ -92,7 +98,9 @@ public class LocationServiceImpl implements LocationService{
     public void delete(Long id) {
         log.debug("Request to delete Location : {}", id);
         locationRepository.delete(id);
-        locationSearchRepository.delete(id);
+        if (applicationProperties.getElasticsearch().isEnabled()){
+            locationSearchRepository.delete(id);
+        }
     }
 
     /**

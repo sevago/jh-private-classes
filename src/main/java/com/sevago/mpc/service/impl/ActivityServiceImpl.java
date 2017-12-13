@@ -1,6 +1,8 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.security.AuthoritiesConstants;
+import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.ActivityService;
 import com.sevago.mpc.domain.Activity;
 import com.sevago.mpc.repository.ActivityRepository;
@@ -9,12 +11,13 @@ import com.sevago.mpc.service.dto.ActivityDTO;
 import com.sevago.mpc.service.mapper.ActivityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -70,7 +73,15 @@ public class ActivityServiceImpl implements ActivityService{
     @Transactional(readOnly = true)
     public List<ActivityDTO> findAll() {
         log.debug("Request to get all Activities");
-        return activityRepository.findByUserIsCurrentUser().stream()
+        return Stream.of(AuthoritiesConstants.ADMIN)
+            .map(authority -> {
+                if(SecurityUtils.isCurrentUserInRole(authority)) {
+                    return activityRepository.findAll();
+                } else {
+                    return activityRepository.findByUserIsCurrentUser();
+                }
+            })
+            .flatMap(Collection::stream)
             .map(activityMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

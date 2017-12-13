@@ -1,6 +1,7 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.security.AuthoritiesConstants;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.InvoiceService;
 import com.sevago.mpc.domain.Invoice;
@@ -12,10 +13,15 @@ import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -71,9 +77,18 @@ public class InvoiceServiceImpl implements InvoiceService{
     @Transactional(readOnly = true)
     public Page<InvoiceDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Invoices");
-        return invoiceRepository.findByTeachingInstructorUserLoginOrderByIssueDateDesc(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
-            new InternalServerErrorException("Current user login not found")), pageable)
-            .map(invoiceMapper::toDto);
+        return Stream.of(AuthoritiesConstants.ADMIN)
+            .map(authority -> {
+                if(SecurityUtils.isCurrentUserInRole(authority)) {
+                    return invoiceRepository.findAll(pageable);
+                } else {
+                    return invoiceRepository.findByTeachingInstructorUserLoginOrderByIssueDateDesc(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                        new InternalServerErrorException("Current user login not found")), pageable);
+                }
+            })
+            .map(page -> page.map(invoiceMapper::toDto))
+            .findFirst()
+            .orElseThrow(() -> new InternalServerErrorException("Missing Spring Data Page"));
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.security.AuthoritiesConstants;
+import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.LocationService;
 import com.sevago.mpc.domain.Location;
 import com.sevago.mpc.repository.LocationRepository;
@@ -12,9 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -70,7 +74,15 @@ public class LocationServiceImpl implements LocationService{
     @Transactional(readOnly = true)
     public List<LocationDTO> findAll() {
         log.debug("Request to get all Locations");
-        return locationRepository.findByUserIsCurrentUser().stream()
+        return Stream.of(AuthoritiesConstants.ADMIN)
+            .map(authority -> {
+                if(SecurityUtils.isCurrentUserInRole(authority)) {
+                    return locationRepository.findAll();
+                } else {
+                    return locationRepository.findByUserIsCurrentUser();
+                }
+            })
+            .flatMap(Collection::stream)
             .map(locationMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

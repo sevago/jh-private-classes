@@ -1,6 +1,7 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.security.AuthoritiesConstants;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.LessonService;
 import com.sevago.mpc.domain.Lesson;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.stream.Stream;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -71,9 +74,18 @@ public class LessonServiceImpl implements LessonService{
     @Transactional(readOnly = true)
     public Page<LessonDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Lessons");
-        return lessonRepository.findByTeachingInstructorUserLoginOrderByDateDesc(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
-            new InternalServerErrorException("Current user login not found")), pageable)
-            .map(lessonMapper::toDto);
+        return Stream.of(AuthoritiesConstants.ADMIN)
+            .map(authority -> {
+                if(SecurityUtils.isCurrentUserInRole(authority)) {
+                    return lessonRepository.findAll(pageable);
+                } else {
+                    return lessonRepository.findByTeachingInstructorUserLoginOrderByDateDesc(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                        new InternalServerErrorException("Current user login not found")), pageable);
+                }
+            })
+            .map(page -> page.map(lessonMapper::toDto))
+            .findFirst()
+            .orElseThrow(() -> new InternalServerErrorException("Missing Spring Data Page"));
     }
 
     /**

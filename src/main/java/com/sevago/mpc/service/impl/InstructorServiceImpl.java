@@ -1,6 +1,8 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.security.AuthoritiesConstants;
+import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.InstructorService;
 import com.sevago.mpc.domain.Instructor;
 import com.sevago.mpc.repository.InstructorRepository;
@@ -12,9 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -70,7 +74,15 @@ public class InstructorServiceImpl implements InstructorService{
     @Transactional(readOnly = true)
     public List<InstructorDTO> findAll() {
         log.debug("Request to get all Instructors");
-        return instructorRepository.findByUserIsCurrentUser().stream()
+        return Stream.of(AuthoritiesConstants.ADMIN)
+            .map(authority -> {
+                if(SecurityUtils.isCurrentUserInRole(authority)) {
+                    return instructorRepository.findAll();
+                } else {
+                    return instructorRepository.findByUserIsCurrentUser();
+                }
+            })
+            .flatMap(Collection::stream)
             .map(instructorMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

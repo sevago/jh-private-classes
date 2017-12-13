@@ -1,6 +1,7 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.security.AuthoritiesConstants;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.StudentService;
 import com.sevago.mpc.domain.Student;
@@ -12,10 +13,13 @@ import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.stream.Stream;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -71,9 +75,23 @@ public class StudentServiceImpl implements StudentService{
     @Transactional(readOnly = true)
     public Page<StudentDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Students");
-        return studentRepository.findByUserLoginOrderByName(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
-            new InternalServerErrorException("Current user login not found")), pageable)
-            .map(studentMapper::toDto);
+        return Stream.of(AuthoritiesConstants.ADMIN)
+            .map(authority -> {
+                if(SecurityUtils.isCurrentUserInRole(authority)) {
+                    return studentRepository.findAll(pageable);
+                } else {
+                    return studentRepository.findByUserLoginOrderByName(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                        new InternalServerErrorException("Current user login not found")), pageable);
+                }
+            })
+            .map(page -> page.map(studentMapper::toDto))
+            /*.reduce((acc, item) -> {
+                acc.getContent().addAll(item.getContent());
+                //Page page = new PageImpl(acc.getContent());
+                return acc;
+            })*/
+            .findFirst()
+            .orElseThrow(() -> new InternalServerErrorException("Missing Spring Data Page"));
     }
 
     /**

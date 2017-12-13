@@ -1,6 +1,8 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.security.AuthoritiesConstants;
+import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.RateService;
 import com.sevago.mpc.domain.Rate;
 import com.sevago.mpc.repository.RateRepository;
@@ -12,9 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -70,7 +74,15 @@ public class RateServiceImpl implements RateService{
     @Transactional(readOnly = true)
     public List<RateDTO> findAll() {
         log.debug("Request to get all Rates");
-        return rateRepository.findByUserIsCurrentUser().stream()
+        return Stream.of(AuthoritiesConstants.ADMIN)
+            .map(authority -> {
+                if(SecurityUtils.isCurrentUserInRole(authority)) {
+                    return rateRepository.findAll();
+                } else {
+                    return rateRepository.findByUserIsCurrentUser();
+                }
+            })
+            .flatMap(Collection::stream)
             .map(rateMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

@@ -17,7 +17,7 @@
 logging:
     level:
         ROOT: #logback.loglevel#
-        com.sevago.mpc: #logback.loglevel#
+        com.sevago.mpc: debug
         io.github.jhipster: #logback.loglevel#
 
 management:

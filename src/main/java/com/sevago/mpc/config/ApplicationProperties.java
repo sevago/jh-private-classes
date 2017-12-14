@@ -12,17 +12,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ApplicationProperties {
 
     private final ApplicationProperties.Elasticsearch elasticsearch = new ApplicationProperties.Elasticsearch();
+    private final ApplicationProperties.Login login = new ApplicationProperties.Login();
 
     public ApplicationProperties() {}
 
     public ApplicationProperties.Elasticsearch getElasticsearch() { return this.elasticsearch; }
 
+    public ApplicationProperties.Login getLogin () { return this.login; }
+
     public static class Elasticsearch {
 
         private Boolean enabled = true;
 
-        public Elasticsearch() {
-        }
+        public Elasticsearch() {}
 
         public boolean isEnabled() {
             return this.enabled;
@@ -33,4 +35,14 @@ public class ApplicationProperties {
         }
     }
 
+    public static class Login {
+
+        private int maxAttempts = 10;
+
+        public Login() {}
+
+        public int getMaxAttempts() { return this.maxAttempts; }
+
+        public void setMaxAttempts(int maxAttempts) { this.maxAttempts = maxAttempts; }
+    }
 }

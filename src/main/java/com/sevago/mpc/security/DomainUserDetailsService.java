@@ -47,7 +47,7 @@ public class DomainUserDetailsService implements UserDetailsService {
         log.debug("Authenticating {}", login);
         String ipAddress = getClientIP(this.request);
         if(loginAttemptService.isBlocked(login + "_" + ipAddress)) {
-            throw new LockedException("You have been blocked due to "+ applicationProperties.getLogin().getMaxAttempts() + " repeated failed sign in attempts");
+            throw new LockedException("You have been blocked due to " + applicationProperties.getLogin().getMaxAttempts() + " repeated failed sign in attempts");
         }
         String lowercaseLogin = login.toLowerCase(Locale.ENGLISH);
         Optional<User> userFromDatabase = userRepository.findOneWithAuthoritiesByLogin(lowercaseLogin);

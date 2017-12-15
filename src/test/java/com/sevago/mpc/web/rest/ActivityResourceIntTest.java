@@ -5,6 +5,7 @@ import com.sevago.mpc.domain.Activity;
 import com.sevago.mpc.domain.User;
 import com.sevago.mpc.repository.ActivityRepository;
 import com.sevago.mpc.repository.search.ActivitySearchRepository;
+import com.sevago.mpc.security.DomainUserDetailsServiceIntTest;
 import com.sevago.mpc.service.ActivityService;
 import com.sevago.mpc.service.UserService;
 import com.sevago.mpc.service.dto.ActivityDTO;
@@ -116,10 +117,10 @@ public class ActivityResourceIntTest {
     public static User userAuthentication(UserService userService, AuthenticationManager authenticationManager) {
         // User login
         UserDTO userDTO = new UserDTO();
-        userDTO.setLogin("test");
-        userDTO.setEmail("test@localhost");
-        userDTO.setFirstName("test");
-        userDTO.setLastName("test");
+        userDTO.setLogin(DomainUserDetailsServiceIntTest.USER);
+        userDTO.setEmail(DomainUserDetailsServiceIntTest.EMAIL);
+        userDTO.setFirstName(DomainUserDetailsServiceIntTest.USER);
+        userDTO.setLastName(DomainUserDetailsServiceIntTest.USER);
 
         User user = userService.registerUser(userDTO, "");
         userService.activateRegistration(user.getActivationKey());

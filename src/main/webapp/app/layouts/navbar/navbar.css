@@ -61,6 +61,7 @@ Navbar
 }
 
 .navbar-title {
+    font-family: 'Merienda', cursive;
     display: inline-block;
     vertical-align: middle;
 }

@@ -29,7 +29,7 @@
         <table class="table table-striped">
             <thead>
             <tr>
-            <th><span>ID</span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>ID</span></th>
             <th><span>Description</span></th>
             <th><span>Amount</span></th>
             <th><span>Currency</span></th>
@@ -40,7 +40,7 @@
             </thead>
             <tbody>
             <tr *ngFor="let rate of rates ;trackBy: trackId">
-                <td><a [routerLink]="['../rate', rate.id ]">{{rate.id}}</a></td>
+                <td *jhiHasAnyAuthority="'ROLE_ADMIN'"><a [routerLink]="['../rate', rate.id ]">{{rate.id}}</a></td>
                 <td>{{rate.description}}</td>
                 <td>{{rate.amount}}</td>
                 <td>{{rate.currency}}</td>

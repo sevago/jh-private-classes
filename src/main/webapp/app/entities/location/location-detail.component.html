@@ -1,6 +1,6 @@
 
 <div *ngIf="location">
-    <h2><span>Location</span> {{location.id}}</h2>
+    <h2><span>Location</span> "{{location.name}}"</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <dl class="row-md jh-entity-details">
@@ -16,8 +16,8 @@
         <dd>
             <span>{{location.description}}</span>
         </dd>
-        <dt><span>User</span></dt>
-        <dd>
+        <dt *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>User</span></dt>
+        <dd *jhiHasAnyAuthority="'ROLE_ADMIN'">
             {{location.userLogin}}
         </dd>
     </dl>

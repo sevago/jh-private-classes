@@ -146,6 +146,6 @@ jhipster:
 
 application:
     elasticsearch:
-        enabled: true
+        enabled: false
     login:
         max-attempts: 3

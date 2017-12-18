@@ -8,6 +8,7 @@ import { LocationComponent } from './location.component';
 import { LocationDetailComponent } from './location-detail.component';
 import { LocationPopupComponent } from './location-dialog.component';
 import { LocationDeletePopupComponent } from './location-delete-dialog.component';
+import {LocationResolve} from './location.resolve';
 
 export const locationRoute: Routes = [
     {
@@ -25,7 +26,10 @@ export const locationRoute: Routes = [
             authorities: ['ROLE_USER'],
             pageTitle: 'Locations'
         },
-        canActivate: [UserRouteAccessService]
+        canActivate: [UserRouteAccessService],
+        resolve: {
+            location: LocationResolve
+        }
     }
 ];
 

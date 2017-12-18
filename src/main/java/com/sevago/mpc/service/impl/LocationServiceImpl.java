@@ -1,6 +1,7 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.repository.UserRepository;
 import com.sevago.mpc.security.AuthoritiesConstants;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.LocationService;
@@ -9,6 +10,7 @@ import com.sevago.mpc.repository.LocationRepository;
 import com.sevago.mpc.repository.search.LocationSearchRepository;
 import com.sevago.mpc.service.dto.LocationDTO;
 import com.sevago.mpc.service.mapper.LocationMapper;
+import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,11 +42,14 @@ public class LocationServiceImpl implements LocationService{
 
     private final ApplicationProperties applicationProperties;
 
-    public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper, LocationSearchRepository locationSearchRepository, ApplicationProperties applicationProperties) {
+    private final UserRepository userRepository;
+
+    public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper, LocationSearchRepository locationSearchRepository, ApplicationProperties applicationProperties, UserRepository userRepository) {
         this.locationRepository = locationRepository;
         this.locationMapper = locationMapper;
         this.locationSearchRepository = locationSearchRepository;
         this.applicationProperties = applicationProperties;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -57,6 +62,12 @@ public class LocationServiceImpl implements LocationService{
     public LocationDTO save(LocationDTO locationDTO) {
         log.debug("Request to save Location : {}", locationDTO);
         Location location = locationMapper.toEntity(locationDTO);
+        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().get());
+            location.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                new InternalServerErrorException("Current user login not found"))
+            ).get());
+        }
         location = locationRepository.save(location);
         LocationDTO result = locationMapper.toDto(location);
         if (applicationProperties.getElasticsearch().isEnabled()) {

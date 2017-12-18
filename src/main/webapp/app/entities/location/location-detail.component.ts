@@ -24,8 +24,8 @@ export class LocationDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
+        this.subscription = this.route.data.subscribe((data: {location: Location}) => {
+            this.location = data.location;
         });
         this.registerChangeInLocations();
     }
@@ -35,6 +35,7 @@ export class LocationDetailComponent implements OnInit, OnDestroy {
             this.location = location;
         });
     }
+
     previousState() {
         window.history.back();
     }

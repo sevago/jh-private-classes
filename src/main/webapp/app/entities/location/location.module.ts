@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { PrivateclassesSharedModule } from '../../shared';
 import { PrivateclassesAdminModule } from '../../admin/admin.module';
 import {
+    LocationResolve,
     LocationService,
     LocationPopupService,
     LocationComponent,
@@ -45,6 +46,7 @@ const ENTITY_STATES = [
     providers: [
         LocationService,
         LocationPopupService,
+        LocationResolve,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

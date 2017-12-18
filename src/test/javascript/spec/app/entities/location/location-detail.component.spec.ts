@@ -27,7 +27,11 @@ describe('Component Tests', () => {
                     DatePipe,
                     {
                         provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({id: 123})
+                        useValue: {
+                            data: Observable.of({
+                                location: new Location(10)
+                            })
+                        }
                     },
                     LocationService,
                     JhiEventManager
@@ -43,17 +47,30 @@ describe('Component Tests', () => {
         });
 
         describe('OnInit', () => {
-            it('Should call load all on init', () => {
+            it('Should get location from the route on init', () => {
             // GIVEN
-
-            spyOn(service, 'find').and.returnValue(Observable.of(new Location(10)));
 
             // WHEN
             comp.ngOnInit();
 
             // THEN
-            expect(service.find).toHaveBeenCalledWith(123);
             expect(comp.location).toEqual(jasmine.objectContaining({id: 10}));
+            });
+        });
+
+        describe('Load', () => {
+            it('Should call find on service', () => {
+                // GIVEN
+
+                spyOn(service, 'find').and.returnValue(Observable.of(new Location(10)));
+
+                // WHEN
+                comp.ngOnInit();
+                comp.load(comp.location.id);
+
+                // THEN
+                expect(service.find).toHaveBeenCalledWith(10);
+                expect(comp.location).toEqual(jasmine.objectContaining({id: 10}));
             });
         });
     });

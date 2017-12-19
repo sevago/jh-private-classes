@@ -21,6 +21,7 @@ export class NavbarComponent implements OnInit {
     swaggerEnabled: boolean;
     modalRef: NgbModalRef;
     version: string;
+    accountName: any;
 
     constructor(
         private loginService: LoginService,
@@ -64,5 +65,9 @@ export class NavbarComponent implements OnInit {
 
     getImageUrl() {
         return this.isAuthenticated() ? this.principal.getImageUrl() : null;
+    }
+
+    getAccountName() {
+        return this.isAuthenticated() ? this.principal.getAccountName() : 'Account';
     }
 }

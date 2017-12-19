@@ -6,3 +6,4 @@ export * from './activity-delete-dialog.component';
 export * from './activity-detail.component';
 export * from './activity.component';
 export * from './activity.route';
+export * from './activity.resolve';

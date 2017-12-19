@@ -6,3 +6,4 @@ export * from './rate-delete-dialog.component';
 export * from './rate-detail.component';
 export * from './rate.component';
 export * from './rate.route';
+export * from './rate.resolve';

@@ -1,6 +1,6 @@
 
 <div *ngIf="activity">
-    <h2><span>Activity</span> {{activity.id}}</h2>
+    <h2><span>Activity</span> {{activity.name}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <dl class="row-md jh-entity-details">
@@ -12,8 +12,8 @@
         <dd>
             <span>{{activity.description}}</span>
         </dd>
-        <dt><span>User</span></dt>
-        <dd>
+        <dt *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>User</span></dt>
+        <dd *jhiHasAnyAuthority="'ROLE_ADMIN'">
             {{activity.userLogin}}
         </dd>
     </dl>

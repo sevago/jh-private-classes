@@ -1,6 +1,7 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.repository.UserRepository;
 import com.sevago.mpc.security.AuthoritiesConstants;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.RateService;
@@ -9,6 +10,7 @@ import com.sevago.mpc.repository.RateRepository;
 import com.sevago.mpc.repository.search.RateSearchRepository;
 import com.sevago.mpc.service.dto.RateDTO;
 import com.sevago.mpc.service.mapper.RateMapper;
+import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,11 +42,14 @@ public class RateServiceImpl implements RateService{
 
     private final ApplicationProperties applicationProperties;
 
-    public RateServiceImpl(RateRepository rateRepository, RateMapper rateMapper, RateSearchRepository rateSearchRepository, ApplicationProperties applicationProperties) {
+    private final UserRepository userRepository;
+
+    public RateServiceImpl(RateRepository rateRepository, RateMapper rateMapper, RateSearchRepository rateSearchRepository, ApplicationProperties applicationProperties, UserRepository userRepository) {
         this.rateRepository = rateRepository;
         this.rateMapper = rateMapper;
         this.rateSearchRepository = rateSearchRepository;
         this.applicationProperties = applicationProperties;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -57,6 +62,12 @@ public class RateServiceImpl implements RateService{
     public RateDTO save(RateDTO rateDTO) {
         log.debug("Request to save Rate : {}", rateDTO);
         Rate rate = rateMapper.toEntity(rateDTO);
+        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().get());
+            rate.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                new InternalServerErrorException("Current user login not found"))
+            ).get());
+        }
         rate = rateRepository.save(rate);
         RateDTO result = rateMapper.toDto(rate);
         if (applicationProperties.getElasticsearch().isEnabled()) {

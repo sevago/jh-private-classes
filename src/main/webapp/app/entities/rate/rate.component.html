@@ -34,7 +34,7 @@
             <th><span>Amount</span></th>
             <th><span>Currency</span></th>
             <th><span>Unit</span></th>
-            <th><span>User</span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>User</span></th>
             <th></th>
             </tr>
             </thead>
@@ -45,7 +45,7 @@
                 <td>{{rate.amount}}</td>
                 <td>{{rate.currency}}</td>
                 <td>{{rate.unit}}</td>
-                <td>
+                <td *jhiHasAnyAuthority="'ROLE_ADMIN'">
                     {{rate.userLogin}}
                 </td>
                 <td class="text-right">

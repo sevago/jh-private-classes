@@ -8,6 +8,7 @@ import { StudentComponent } from './student.component';
 import { StudentDetailComponent } from './student-detail.component';
 import { StudentPopupComponent } from './student-dialog.component';
 import { StudentDeletePopupComponent } from './student-delete-dialog.component';
+import { StudentResolve } from './student.resolve';
 
 @Injectable()
 export class StudentResolvePagingParams implements Resolve<any> {
@@ -44,7 +45,10 @@ export const studentRoute: Routes = [
             authorities: ['ROLE_USER'],
             pageTitle: 'Students'
         },
-        canActivate: [UserRouteAccessService]
+        canActivate: [UserRouteAccessService],
+        resolve: {
+            student: StudentResolve
+        }
     }
 ];
 

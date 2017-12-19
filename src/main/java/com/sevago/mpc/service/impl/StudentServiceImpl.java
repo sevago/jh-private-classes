@@ -1,6 +1,7 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.repository.UserRepository;
 import com.sevago.mpc.security.AuthoritiesConstants;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.StudentService;
@@ -13,7 +14,6 @@ import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,11 +40,14 @@ public class StudentServiceImpl implements StudentService{
 
     private final ApplicationProperties applicationProperties;
 
-    public StudentServiceImpl(StudentRepository studentRepository, StudentMapper studentMapper, StudentSearchRepository studentSearchRepository, ApplicationProperties applicationProperties) {
+    private final UserRepository userRepository;
+
+    public StudentServiceImpl(StudentRepository studentRepository, StudentMapper studentMapper, StudentSearchRepository studentSearchRepository, ApplicationProperties applicationProperties, UserRepository userRepository) {
         this.studentRepository = studentRepository;
         this.studentMapper = studentMapper;
         this.studentSearchRepository = studentSearchRepository;
         this.applicationProperties = applicationProperties;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -57,6 +60,12 @@ public class StudentServiceImpl implements StudentService{
     public StudentDTO save(StudentDTO studentDTO) {
         log.debug("Request to save Student : {}", studentDTO);
         Student student = studentMapper.toEntity(studentDTO);
+        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().get());
+            student.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                new InternalServerErrorException("Current user login not found"))
+            ).get());
+        }
         student = studentRepository.save(student);
         StudentDTO result = studentMapper.toDto(student);
         if (applicationProperties.getElasticsearch().isEnabled()) {

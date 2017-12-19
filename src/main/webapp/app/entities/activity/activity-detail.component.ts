@@ -24,8 +24,8 @@ export class ActivityDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
+        this.subscription = this.route.data.subscribe((data: {activity: Activity}) => {
+            this.activity = data.activity;
         });
         this.registerChangeInActivities();
     }

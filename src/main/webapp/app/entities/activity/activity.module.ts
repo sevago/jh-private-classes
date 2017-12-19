@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { PrivateclassesSharedModule } from '../../shared';
 import { PrivateclassesAdminModule } from '../../admin/admin.module';
 import {
+    ActivityResolve,
     ActivityService,
     ActivityPopupService,
     ActivityComponent,
@@ -45,6 +46,7 @@ const ENTITY_STATES = [
     providers: [
         ActivityService,
         ActivityPopupService,
+        ActivityResolve,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

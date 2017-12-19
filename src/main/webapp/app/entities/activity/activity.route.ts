@@ -8,6 +8,7 @@ import { ActivityComponent } from './activity.component';
 import { ActivityDetailComponent } from './activity-detail.component';
 import { ActivityPopupComponent } from './activity-dialog.component';
 import { ActivityDeletePopupComponent } from './activity-delete-dialog.component';
+import { ActivityResolve } from './activity.resolve';
 
 export const activityRoute: Routes = [
     {
@@ -25,7 +26,10 @@ export const activityRoute: Routes = [
             authorities: ['ROLE_USER'],
             pageTitle: 'Activities'
         },
-        canActivate: [UserRouteAccessService]
+        canActivate: [UserRouteAccessService],
+        resolve: {
+            activity: ActivityResolve
+        }
     }
 ];
 

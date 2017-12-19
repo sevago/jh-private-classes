@@ -27,7 +27,11 @@ describe('Component Tests', () => {
                     DatePipe,
                     {
                         provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({id: 123})
+                        useValue: {
+                            data: Observable.of({
+                                rate: new Rate(10)
+                            })
+                        }
                     },
                     RateService,
                     JhiEventManager
@@ -43,17 +47,30 @@ describe('Component Tests', () => {
         });
 
         describe('OnInit', () => {
-            it('Should call load all on init', () => {
+            it('Should get rate from the route data', () => {
             // GIVEN
-
-            spyOn(service, 'find').and.returnValue(Observable.of(new Rate(10)));
 
             // WHEN
             comp.ngOnInit();
 
             // THEN
-            expect(service.find).toHaveBeenCalledWith(123);
             expect(comp.rate).toEqual(jasmine.objectContaining({id: 10}));
+            });
+        });
+
+        describe('Load', () => {
+            it('Should call find on the service', () => {
+                // GIVEN
+
+                spyOn(service, 'find').and.returnValue(Observable.of(new Rate(10)));
+
+                // WHEN
+                comp.ngOnInit();
+                comp.load(comp.rate.id);
+
+                // THEN
+                expect(service.find).toHaveBeenCalledWith(10);
+                expect(comp.rate).toEqual(jasmine.objectContaining({id: 10}));
             });
         });
     });

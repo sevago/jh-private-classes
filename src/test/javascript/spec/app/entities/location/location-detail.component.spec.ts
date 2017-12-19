@@ -47,7 +47,7 @@ describe('Component Tests', () => {
         });
 
         describe('OnInit', () => {
-            it('Should get location from the route on init', () => {
+            it('Should get location from the route data', () => {
             // GIVEN
 
             // WHEN
@@ -59,7 +59,7 @@ describe('Component Tests', () => {
         });
 
         describe('Load', () => {
-            it('Should call find on service', () => {
+            it('Should call find on the service', () => {
                 // GIVEN
 
                 spyOn(service, 'find').and.returnValue(Observable.of(new Location(10)));

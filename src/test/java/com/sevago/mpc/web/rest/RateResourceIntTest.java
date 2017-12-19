@@ -13,6 +13,7 @@ import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.RateMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +36,7 @@ import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.sevago.mpc.security.DomainUserDetailsServiceIntTest.USER;
 import static com.sevago.mpc.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -98,9 +100,7 @@ public class RateResourceIntTest {
 
     private Rate rate;
 
-    private static UserDTO userDTO;
-
-    private static User user;
+    private User user;
 
     @Before
     public void setup() {
@@ -132,6 +132,13 @@ public class RateResourceIntTest {
     public void initTest() {
         rateSearchRepository.deleteAll();
         rate = createEntity(em);
+        user = ActivityResourceIntTest.userAuthentication(userService, authenticationManager);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        rateRepository.deleteAll();
+        userService.deleteUser(USER);
     }
 
     @Test
@@ -154,6 +161,7 @@ public class RateResourceIntTest {
         assertThat(testRate.getAmount()).isEqualTo(DEFAULT_AMOUNT);
         assertThat(testRate.getCurrency()).isEqualTo(DEFAULT_CURRENCY);
         assertThat(testRate.getUnit()).isEqualTo(DEFAULT_UNIT);
+        assertThat(testRate.getUser()).isEqualToComparingOnlyGivenFields(user, "login");
 
         // Validate the Rate in Elasticsearch
         Rate rateEs = rateSearchRepository.findOne(testRate.getId());
@@ -221,20 +229,6 @@ public class RateResourceIntTest {
     @Test
     @Transactional
     public void getAllRates() throws Exception {
-        // User login
-        userDTO = new UserDTO();
-        userDTO.setLogin("test");
-        userDTO.setEmail("test@localhost");
-        userDTO.setFirstName("test");
-        userDTO.setLastName("test");
-
-        user = userService.registerUser(userDTO, "");
-        userService.activateRegistration(user.getActivationKey());
-        UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
-        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // Set user reference
         rate.setUser(user);
 

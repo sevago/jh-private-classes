@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { PrivateclassesSharedModule } from '../../shared';
 import { PrivateclassesAdminModule } from '../../admin/admin.module';
 import {
+    StudentResolve,
     StudentService,
     StudentPopupService,
     StudentComponent,
@@ -47,6 +48,7 @@ const ENTITY_STATES = [
         StudentService,
         StudentPopupService,
         StudentResolvePagingParams,
+        StudentResolve,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

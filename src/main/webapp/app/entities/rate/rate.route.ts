@@ -8,6 +8,7 @@ import { RateComponent } from './rate.component';
 import { RateDetailComponent } from './rate-detail.component';
 import { RatePopupComponent } from './rate-dialog.component';
 import { RateDeletePopupComponent } from './rate-delete-dialog.component';
+import { RateResolve } from './rate.resolve';
 
 export const rateRoute: Routes = [
     {
@@ -25,7 +26,10 @@ export const rateRoute: Routes = [
             authorities: ['ROLE_USER'],
             pageTitle: 'Rates'
         },
-        canActivate: [UserRouteAccessService]
+        canActivate: [UserRouteAccessService],
+        resolve: {
+            rate: RateResolve
+        }
     }
 ];
 

@@ -1,6 +1,7 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.repository.UserRepository;
 import com.sevago.mpc.security.AuthoritiesConstants;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.ActivityService;
@@ -9,9 +10,9 @@ import com.sevago.mpc.repository.ActivityRepository;
 import com.sevago.mpc.repository.search.ActivitySearchRepository;
 import com.sevago.mpc.service.dto.ActivityDTO;
 import com.sevago.mpc.service.mapper.ActivityMapper;
+import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,11 +40,14 @@ public class ActivityServiceImpl implements ActivityService{
 
     private final ApplicationProperties applicationProperties;
 
-    public ActivityServiceImpl(ActivityRepository activityRepository, ActivityMapper activityMapper, ActivitySearchRepository activitySearchRepository, ApplicationProperties applicationProperties) {
+    private final UserRepository userRepository;
+
+    public ActivityServiceImpl(ActivityRepository activityRepository, ActivityMapper activityMapper, ActivitySearchRepository activitySearchRepository, ApplicationProperties applicationProperties, UserRepository userRepository) {
         this.activityRepository = activityRepository;
         this.activityMapper = activityMapper;
         this.activitySearchRepository = activitySearchRepository;
         this.applicationProperties = applicationProperties;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -56,6 +60,12 @@ public class ActivityServiceImpl implements ActivityService{
     public ActivityDTO save(ActivityDTO activityDTO) {
         log.debug("Request to save Activity : {}", activityDTO);
         Activity activity = activityMapper.toEntity(activityDTO);
+        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().get());
+            activity.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                new InternalServerErrorException("Current user login not found"))
+            ).get());
+        }
         activity = activityRepository.save(activity);
         ActivityDTO result = activityMapper.toDto(activity);
         if (applicationProperties.getElasticsearch().isEnabled()) {

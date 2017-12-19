@@ -8,7 +8,7 @@ import { LocationComponent } from './location.component';
 import { LocationDetailComponent } from './location-detail.component';
 import { LocationPopupComponent } from './location-dialog.component';
 import { LocationDeletePopupComponent } from './location-delete-dialog.component';
-import {LocationResolve} from './location.resolve';
+import { LocationResolve } from './location.resolve';
 
 export const locationRoute: Routes = [
     {

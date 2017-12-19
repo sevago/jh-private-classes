@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { PrivateclassesSharedModule } from '../../shared';
 import { PrivateclassesAdminModule } from '../../admin/admin.module';
 import {
+    RateResolve,
     RateService,
     RatePopupService,
     RateComponent,
@@ -45,6 +46,7 @@ const ENTITY_STATES = [
     providers: [
         RateService,
         RatePopupService,
+        RateResolve,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

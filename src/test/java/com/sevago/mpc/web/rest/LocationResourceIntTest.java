@@ -8,7 +8,6 @@ import com.sevago.mpc.repository.search.LocationSearchRepository;
 import com.sevago.mpc.service.LocationService;
 import com.sevago.mpc.service.UserService;
 import com.sevago.mpc.service.dto.LocationDTO;
-import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.LocationMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
 import org.junit.After;
@@ -89,9 +88,7 @@ public class LocationResourceIntTest {
 
     private Location location;
 
-    private static UserDTO userDTO;
-
-    private static User user;
+    private User user;
 
     @Before
     public void setup() {
@@ -122,7 +119,6 @@ public class LocationResourceIntTest {
     public void initTest() {
         locationSearchRepository.deleteAll();
         location = createEntity(em);
-        userService.deleteUser(USER);
         user = ActivityResourceIntTest.userAuthentication(userService, authenticationManager);
     }
 
@@ -200,20 +196,6 @@ public class LocationResourceIntTest {
     @Test
     @Transactional
     public void getAllLocations() throws Exception {
-        /*// User login
-        userDTO = new UserDTO();
-        userDTO.setLogin("test");
-        userDTO.setEmail("test@localhost");
-        userDTO.setFirstName("test");
-        userDTO.setLastName("test");
-
-        user = userService.registerUser(userDTO, "");
-        userService.activateRegistration(user.getActivationKey());
-        UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
-        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);*/
-
         // Set user reference
         location.setUser(user);
 

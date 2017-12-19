@@ -13,6 +13,7 @@ import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.StudentMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.sevago.mpc.security.DomainUserDetailsServiceIntTest.USER;
 import static com.sevago.mpc.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -92,9 +94,7 @@ public class StudentResourceIntTest {
 
     private Student student;
 
-    private static UserDTO userDTO;
-
-    private static User user;
+    private User user;
 
     @Before
     public void setup() {
@@ -125,6 +125,13 @@ public class StudentResourceIntTest {
     public void initTest() {
         studentSearchRepository.deleteAll();
         student = createEntity(em);
+        user = ActivityResourceIntTest.userAuthentication(userService, authenticationManager);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        studentRepository.deleteAll();
+        userService.deleteUser(USER);
     }
 
     @Test
@@ -146,6 +153,7 @@ public class StudentResourceIntTest {
         assertThat(testStudent.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testStudent.getPhoneNumber()).isEqualTo(DEFAULT_PHONE_NUMBER);
         assertThat(testStudent.getEmail()).isEqualTo(DEFAULT_EMAIL);
+        assertThat(testStudent.getUser()).isEqualToComparingOnlyGivenFields(user, "login");
 
         // Validate the Student in Elasticsearch
         Student studentEs = studentSearchRepository.findOne(testStudent.getId());
@@ -194,20 +202,6 @@ public class StudentResourceIntTest {
     @Test
     @Transactional
     public void getAllStudents() throws Exception {
-        // User login
-        userDTO = new UserDTO();
-        userDTO.setLogin("test");
-        userDTO.setEmail("test@localhost");
-        userDTO.setFirstName("test");
-        userDTO.setLastName("test");
-
-        user = userService.registerUser(userDTO, "");
-        userService.activateRegistration(user.getActivationKey());
-        UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
-        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // Set user reference
         student.setUser(user);
 

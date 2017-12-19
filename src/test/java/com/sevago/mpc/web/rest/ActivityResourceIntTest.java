@@ -12,6 +12,7 @@ import com.sevago.mpc.service.dto.ActivityDTO;
 import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.ActivityMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.sevago.mpc.security.DomainUserDetailsServiceIntTest.USER;
 import static com.sevago.mpc.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -138,6 +140,12 @@ public class ActivityResourceIntTest {
         user = userAuthentication(userService, authenticationManager);
     }
 
+    @After
+    public void tearDown() throws Exception {
+        activityRepository.deleteAll();
+        userService.deleteUser(USER);
+    }
+
     @Test
     @Transactional
     public void createActivity() throws Exception {
@@ -156,6 +164,7 @@ public class ActivityResourceIntTest {
         Activity testActivity = activityList.get(activityList.size() - 1);
         assertThat(testActivity.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testActivity.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        assertThat(testActivity.getUser()).isEqualToComparingOnlyGivenFields(user, "login");
 
         // Validate the Activity in Elasticsearch
         Activity activityEs = activitySearchRepository.findOne(testActivity.getId());

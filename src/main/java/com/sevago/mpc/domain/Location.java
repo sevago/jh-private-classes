@@ -17,7 +17,7 @@ import java.util.Objects;
 @Table(name = "location")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "location")
-public class Location implements Serializable {
+public class Location implements Serializable, MpcEntity {
 
     private static final long serialVersionUID = 1L;
 

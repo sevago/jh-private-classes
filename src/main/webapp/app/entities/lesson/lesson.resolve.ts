@@ -27,7 +27,7 @@ export class LessonResolve implements Resolve<any> {
 
         return this.lessonService.find(Number(route.paramMap.get('id')))
             .filter((lesson: Lesson) => {
-                if (this.account.authorities.includes('ROLE_ADMIN') || this.account.id) {
+                if (this.account.authorities.includes('ROLE_ADMIN') || this.account.id === lesson.userId) {
                     return true;
                 } else {
                     this.router.navigate(['accessdenied']);

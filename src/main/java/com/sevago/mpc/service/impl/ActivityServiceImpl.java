@@ -28,7 +28,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @Service
 @Transactional
-public class ActivityServiceImpl implements ActivityService{
+public class ActivityServiceImpl extends CommonServiceImpl implements ActivityService{
 
     private final Logger log = LoggerFactory.getLogger(ActivityServiceImpl.class);
 
@@ -60,12 +60,7 @@ public class ActivityServiceImpl implements ActivityService{
     public ActivityDTO save(ActivityDTO activityDTO) {
         log.debug("Request to save Activity : {}", activityDTO);
         Activity activity = activityMapper.toEntity(activityDTO);
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().get());
-            activity.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
-                new InternalServerErrorException("Current user login not found"))
-            ).get());
-        }
+        activity = (Activity) populateDefaultProperties(activity);
         activity = activityRepository.save(activity);
         ActivityDTO result = activityMapper.toDto(activity);
         if (applicationProperties.getElasticsearch().isEnabled()) {

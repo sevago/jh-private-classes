@@ -20,7 +20,7 @@ import java.util.Objects;
 @Table(name = "student")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "student")
-public class Student implements Serializable {
+public class Student implements Serializable, MpcEntity {
 
     private static final long serialVersionUID = 1L;
 

@@ -30,7 +30,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @Service
 @Transactional
-public class LocationServiceImpl implements LocationService{
+public class LocationServiceImpl extends CommonServiceImpl implements LocationService{
 
     private final Logger log = LoggerFactory.getLogger(LocationServiceImpl.class);
 
@@ -62,12 +62,7 @@ public class LocationServiceImpl implements LocationService{
     public LocationDTO save(LocationDTO locationDTO) {
         log.debug("Request to save Location : {}", locationDTO);
         Location location = locationMapper.toEntity(locationDTO);
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().get());
-            location.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
-                new InternalServerErrorException("Current user login not found"))
-            ).get());
-        }
+        location = (Location) populateDefaultProperties(location);
         location = locationRepository.save(location);
         LocationDTO result = locationMapper.toDto(location);
         if (applicationProperties.getElasticsearch().isEnabled()) {

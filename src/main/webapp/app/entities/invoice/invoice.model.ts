@@ -19,6 +19,7 @@ export class Invoice implements BaseEntity {
         public lessons?: BaseEntity[],
         public billToStudentId?: number,
         public teachingInstructorId?: number,
+        public userId?: number,
     ) {
     }
 }

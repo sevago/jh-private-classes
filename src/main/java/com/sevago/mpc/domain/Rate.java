@@ -25,7 +25,7 @@ import com.sevago.mpc.domain.enumeration.RateUnit;
 @Table(name = "rate")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "rate")
-public class Rate implements Serializable {
+public class Rate implements Serializable, MpcEntity {
 
     private static final long serialVersionUID = 1L;
 

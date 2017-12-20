@@ -21,7 +21,8 @@ public interface LessonMapper extends EntityMapper<LessonDTO, Lesson> {
     @Mapping(source = "rate.description", target = "rateDescription")
     @Mapping(source = "teachingInstructor.id", target = "teachingInstructorId")
     @Mapping(source = "teachingInstructor.name", target = "teachingInstructorName")
-    LessonDTO toDto(Lesson lesson); 
+    @Mapping(source = "teachingInstructor.user.id", target = "userId")
+    LessonDTO toDto(Lesson lesson);
 
     @Mapping(source = "activityId", target = "activity")
     @Mapping(source = "locationId", target = "location")

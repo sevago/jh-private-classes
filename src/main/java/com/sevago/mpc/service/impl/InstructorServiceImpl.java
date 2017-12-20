@@ -30,7 +30,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @Service
 @Transactional
-public class InstructorServiceImpl implements InstructorService{
+public class InstructorServiceImpl extends CommonServiceImpl implements InstructorService {
 
     private final Logger log = LoggerFactory.getLogger(InstructorServiceImpl.class);
 
@@ -62,12 +62,7 @@ public class InstructorServiceImpl implements InstructorService{
     public InstructorDTO save(InstructorDTO instructorDTO) {
         log.debug("Request to save Instructor : {}", instructorDTO);
         Instructor instructor = instructorMapper.toEntity(instructorDTO);
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().get());
-            instructor.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
-                new InternalServerErrorException("Current user login not found"))
-            ).get());
-        }
+        instructor = (Instructor) populateDefaultProperties(instructor);
         instructor = instructorRepository.save(instructor);
         InstructorDTO result = instructorMapper.toDto(instructor);
         if (applicationProperties.getElasticsearch().isEnabled()) {

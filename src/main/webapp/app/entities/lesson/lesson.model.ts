@@ -13,6 +13,7 @@ export class Lesson implements BaseEntity {
         public students?: BaseEntity[],
         public teachingInstructorId?: number,
         public invoices?: BaseEntity[],
+        public userId?: number,
     ) {
     }
 }

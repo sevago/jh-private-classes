@@ -15,7 +15,8 @@ public interface InvoiceMapper extends EntityMapper<InvoiceDTO, Invoice> {
     @Mapping(source = "billToStudent.name", target = "billToStudentName")
     @Mapping(source = "teachingInstructor.id", target = "teachingInstructorId")
     @Mapping(source = "teachingInstructor.name", target = "teachingInstructorName")
-    InvoiceDTO toDto(Invoice invoice); 
+    @Mapping(source = "teachingInstructor.user.id", target = "userId")
+    InvoiceDTO toDto(Invoice invoice);
 
     @Mapping(source = "billToStudentId", target = "billToStudent")
     @Mapping(source = "teachingInstructorId", target = "teachingInstructor")

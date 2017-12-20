@@ -27,7 +27,7 @@ export class InvoiceResolve implements Resolve<any> {
 
         return this.invoiceService.find(Number(route.paramMap.get('id')))
             .filter((invoice: Invoice) => {
-                if (this.account.authorities.includes('ROLE_ADMIN') || this.account.id) {
+                if (this.account.authorities.includes('ROLE_ADMIN') || this.account.id === invoice.userId) {
                     return true;
                 } else {
                     this.router.navigate(['accessdenied']);

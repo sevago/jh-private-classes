@@ -30,7 +30,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @Service
 @Transactional
-public class LessonTypeServiceImpl implements LessonTypeService{
+public class LessonTypeServiceImpl extends CommonServiceImpl implements LessonTypeService {
 
     private final Logger log = LoggerFactory.getLogger(LessonTypeServiceImpl.class);
 
@@ -62,12 +62,7 @@ public class LessonTypeServiceImpl implements LessonTypeService{
     public LessonTypeDTO save(LessonTypeDTO lessonTypeDTO) {
         log.debug("Request to save LessonType : {}", lessonTypeDTO);
         LessonType lessonType = lessonTypeMapper.toEntity(lessonTypeDTO);
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().get());
-            lessonType.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
-                new InternalServerErrorException("Current user login not found"))
-            ).get());
-        }
+        lessonType = (LessonType) populateDefaultProperties(lessonType);
         lessonType = lessonTypeRepository.save(lessonType);
         LessonTypeDTO result = lessonTypeMapper.toDto(lessonType);
         if (applicationProperties.getElasticsearch().isEnabled()) {

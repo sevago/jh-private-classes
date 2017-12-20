@@ -17,7 +17,7 @@ import java.util.Objects;
 @Table(name = "activity")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "activity")
-public class Activity implements Serializable {
+public class Activity implements Serializable, MpcEntity {
 
     private static final long serialVersionUID = 1L;
 

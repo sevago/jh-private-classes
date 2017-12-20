@@ -13,7 +13,7 @@ public interface LessonTypeMapper extends EntityMapper<LessonTypeDTO, LessonType
 
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "user.login", target = "userLogin")
-    LessonTypeDTO toDto(LessonType lessonType); 
+    LessonTypeDTO toDto(LessonType lessonType);
 
     @Mapping(source = "userId", target = "user")
     LessonType toEntity(LessonTypeDTO lessonTypeDTO);

@@ -30,7 +30,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @Service
 @Transactional
-public class RateServiceImpl implements RateService{
+public class RateServiceImpl extends CommonServiceImpl implements RateService {
 
     private final Logger log = LoggerFactory.getLogger(RateServiceImpl.class);
 
@@ -62,12 +62,7 @@ public class RateServiceImpl implements RateService{
     public RateDTO save(RateDTO rateDTO) {
         log.debug("Request to save Rate : {}", rateDTO);
         Rate rate = rateMapper.toEntity(rateDTO);
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().get());
-            rate.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
-                new InternalServerErrorException("Current user login not found"))
-            ).get());
-        }
+        rate = (Rate) populateDefaultProperties(rate);
         rate = rateRepository.save(rate);
         RateDTO result = rateMapper.toDto(rate);
         if (applicationProperties.getElasticsearch().isEnabled()) {

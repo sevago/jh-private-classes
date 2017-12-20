@@ -46,6 +46,8 @@ public class InvoiceDTO implements Serializable {
 
     private String teachingInstructorName;
 
+    private Long userId;
+
     public Long getId() {
         return id;
     }
@@ -149,6 +151,10 @@ public class InvoiceDTO implements Serializable {
     public void setTeachingInstructorName(String instructorName) {
         this.teachingInstructorName = instructorName;
     }
+
+    public Long getUserId() { return userId; }
+
+    public void setUserId(Long userId) { this.userId = userId; }
 
     @Override
     public boolean equals(Object o) {

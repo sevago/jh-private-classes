@@ -13,6 +13,7 @@ import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.InstructorMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.sevago.mpc.security.DomainUserDetailsServiceIntTest.USER;
 import static com.sevago.mpc.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -95,9 +97,7 @@ public class InstructorResourceIntTest {
 
     private Instructor instructor;
 
-    private static UserDTO userDTO;
-
-    private static User user;
+    private User user;
 
     @Before
     public void setup() {
@@ -129,6 +129,13 @@ public class InstructorResourceIntTest {
     public void initTest() {
         instructorSearchRepository.deleteAll();
         instructor = createEntity(em);
+        user = ActivityResourceIntTest.userAuthentication(userService, authenticationManager);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        instructorRepository.deleteAll();
+        userService.deleteUser(USER);
     }
 
     @Test
@@ -151,6 +158,7 @@ public class InstructorResourceIntTest {
         assertThat(testInstructor.getAddress()).isEqualTo(DEFAULT_ADDRESS);
         assertThat(testInstructor.getPhoneNumber()).isEqualTo(DEFAULT_PHONE_NUMBER);
         assertThat(testInstructor.getEmail()).isEqualTo(DEFAULT_EMAIL);
+        assertThat(testInstructor.getUser()).isEqualToComparingOnlyGivenFields(user, "login");
 
         // Validate the Instructor in Elasticsearch
         Instructor instructorEs = instructorSearchRepository.findOne(testInstructor.getId());
@@ -199,20 +207,6 @@ public class InstructorResourceIntTest {
     @Test
     @Transactional
     public void getAllInstructors() throws Exception {
-        // User login
-        userDTO = new UserDTO();
-        userDTO.setLogin("test");
-        userDTO.setEmail("test@localhost");
-        userDTO.setFirstName("test");
-        userDTO.setLastName("test");
-
-        user = userService.registerUser(userDTO, "");
-        userService.activateRegistration(user.getActivationKey());
-        UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
-        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // Set user reference
         instructor.setUser(user);
 

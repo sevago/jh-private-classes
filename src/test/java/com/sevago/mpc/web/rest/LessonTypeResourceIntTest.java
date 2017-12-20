@@ -13,6 +13,7 @@ import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.LessonTypeMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +36,7 @@ import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.sevago.mpc.security.DomainUserDetailsServiceIntTest.USER;
 import static com.sevago.mpc.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -90,9 +92,7 @@ public class LessonTypeResourceIntTest {
 
     private LessonType lessonType;
 
-    private static UserDTO userDTO;
-
-    private static User user;
+    private User user;
 
     @Before
     public void setup() {
@@ -122,6 +122,13 @@ public class LessonTypeResourceIntTest {
     public void initTest() {
         lessonTypeSearchRepository.deleteAll();
         lessonType = createEntity(em);
+        user = ActivityResourceIntTest.userAuthentication(userService, authenticationManager);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        lessonTypeRepository.deleteAll();
+        userService.deleteUser(USER);
     }
 
     @Test
@@ -142,6 +149,7 @@ public class LessonTypeResourceIntTest {
         LessonType testLessonType = lessonTypeList.get(lessonTypeList.size() - 1);
         assertThat(testLessonType.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testLessonType.getRatio()).isEqualTo(DEFAULT_RATIO);
+        assertThat(testLessonType.getUser()).isEqualToComparingOnlyGivenFields(user, "login");
 
         // Validate the LessonType in Elasticsearch
         LessonType lessonTypeEs = lessonTypeSearchRepository.findOne(testLessonType.getId());
@@ -209,20 +217,6 @@ public class LessonTypeResourceIntTest {
     @Test
     @Transactional
     public void getAllLessonTypes() throws Exception {
-        // User login
-        userDTO = new UserDTO();
-        userDTO.setLogin("test");
-        userDTO.setEmail("test@localhost");
-        userDTO.setFirstName("test");
-        userDTO.setLastName("test");
-
-        user = userService.registerUser(userDTO, "");
-        userService.activateRegistration(user.getActivationKey());
-        UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
-        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // Set user reference
         lessonType.setUser(user);
 

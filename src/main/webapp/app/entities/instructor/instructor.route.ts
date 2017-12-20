@@ -8,6 +8,7 @@ import { InstructorComponent } from './instructor.component';
 import { InstructorDetailComponent } from './instructor-detail.component';
 import { InstructorPopupComponent } from './instructor-dialog.component';
 import { InstructorDeletePopupComponent } from './instructor-delete-dialog.component';
+import { InstructorResolve } from './instructor.resolve';
 
 export const instructorRoute: Routes = [
     {
@@ -25,7 +26,10 @@ export const instructorRoute: Routes = [
             authorities: ['ROLE_USER'],
             pageTitle: 'Instructors'
         },
-        canActivate: [UserRouteAccessService]
+        canActivate: [UserRouteAccessService],
+        resolve: {
+            instructor: InstructorResolve
+        }
     }
 ];
 

@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 
 import { PrivateclassesSharedModule } from '../../shared';
 import {
+    InvoiceResolve,
     InvoiceService,
     InvoicePopupService,
     InvoiceComponent,
@@ -45,6 +46,7 @@ const ENTITY_STATES = [
         InvoiceService,
         InvoicePopupService,
         InvoiceResolvePagingParams,
+        InvoiceResolve,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

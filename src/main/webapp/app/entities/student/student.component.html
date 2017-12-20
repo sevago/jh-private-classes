@@ -29,11 +29,11 @@
         <table class="table table-striped">
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th *jhiHasAnyAuthority="'ROLE_ADMIN'" jhiSortBy="id"><span>ID</span> <span class="fa fa-sort"></span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>ID</span></th>
             <th jhiSortBy="name"><span>Name</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="phoneNumber"><span>Phone Number</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="email"><span>Email</span> <span class="fa fa-sort"></span></th>
-            <th *jhiHasAnyAuthority="'ROLE_ADMIN'" jhiSortBy="userLogin"><span>User</span> <span class="fa fa-sort"></span></th>
+            <th><span>Phone Number</span></th>
+            <th><span>Email</span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>User</span></th>
             <th></th>
             </tr>
             </thead>

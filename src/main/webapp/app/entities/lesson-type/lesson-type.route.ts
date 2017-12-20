@@ -8,6 +8,7 @@ import { LessonTypeComponent } from './lesson-type.component';
 import { LessonTypeDetailComponent } from './lesson-type-detail.component';
 import { LessonTypePopupComponent } from './lesson-type-dialog.component';
 import { LessonTypeDeletePopupComponent } from './lesson-type-delete-dialog.component';
+import { LessonTypeResolve } from './lesson-type.resolve';
 
 export const lessonTypeRoute: Routes = [
     {
@@ -25,7 +26,10 @@ export const lessonTypeRoute: Routes = [
             authorities: ['ROLE_USER'],
             pageTitle: 'LessonTypes'
         },
-        canActivate: [UserRouteAccessService]
+        canActivate: [UserRouteAccessService],
+        resolve: {
+            lessonType: LessonTypeResolve
+        }
     }
 ];
 

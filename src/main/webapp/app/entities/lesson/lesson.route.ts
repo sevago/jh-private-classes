@@ -8,6 +8,7 @@ import { LessonComponent } from './lesson.component';
 import { LessonDetailComponent } from './lesson-detail.component';
 import { LessonPopupComponent } from './lesson-dialog.component';
 import { LessonDeletePopupComponent } from './lesson-delete-dialog.component';
+import { LessonResolve } from './lesson.resolve';
 
 @Injectable()
 export class LessonResolvePagingParams implements Resolve<any> {
@@ -44,7 +45,10 @@ export const lessonRoute: Routes = [
             authorities: ['ROLE_USER'],
             pageTitle: 'Lessons'
         },
-        canActivate: [UserRouteAccessService]
+        canActivate: [UserRouteAccessService],
+        resolve: {
+            lesson: LessonResolve
+        }
     }
 ];
 

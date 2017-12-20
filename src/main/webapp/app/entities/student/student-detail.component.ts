@@ -35,6 +35,7 @@ export class StudentDetailComponent implements OnInit, OnDestroy {
             this.student = student;
         });
     }
+
     previousState() {
         window.history.back();
     }

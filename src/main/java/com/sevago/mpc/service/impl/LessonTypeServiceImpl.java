@@ -1,6 +1,7 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.repository.UserRepository;
 import com.sevago.mpc.security.AuthoritiesConstants;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.LessonTypeService;
@@ -9,6 +10,7 @@ import com.sevago.mpc.repository.LessonTypeRepository;
 import com.sevago.mpc.repository.search.LessonTypeSearchRepository;
 import com.sevago.mpc.service.dto.LessonTypeDTO;
 import com.sevago.mpc.service.mapper.LessonTypeMapper;
+import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,11 +42,14 @@ public class LessonTypeServiceImpl implements LessonTypeService{
 
     private final ApplicationProperties applicationProperties;
 
-    public LessonTypeServiceImpl(LessonTypeRepository lessonTypeRepository, LessonTypeMapper lessonTypeMapper, LessonTypeSearchRepository lessonTypeSearchRepository, ApplicationProperties applicationProperties) {
+    private final UserRepository userRepository;
+
+    public LessonTypeServiceImpl(LessonTypeRepository lessonTypeRepository, LessonTypeMapper lessonTypeMapper, LessonTypeSearchRepository lessonTypeSearchRepository, ApplicationProperties applicationProperties, UserRepository userRepository) {
         this.lessonTypeRepository = lessonTypeRepository;
         this.lessonTypeMapper = lessonTypeMapper;
         this.lessonTypeSearchRepository = lessonTypeSearchRepository;
         this.applicationProperties = applicationProperties;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -57,6 +62,12 @@ public class LessonTypeServiceImpl implements LessonTypeService{
     public LessonTypeDTO save(LessonTypeDTO lessonTypeDTO) {
         log.debug("Request to save LessonType : {}", lessonTypeDTO);
         LessonType lessonType = lessonTypeMapper.toEntity(lessonTypeDTO);
+        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().get());
+            lessonType.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                new InternalServerErrorException("Current user login not found"))
+            ).get());
+        }
         lessonType = lessonTypeRepository.save(lessonType);
         LessonTypeDTO result = lessonTypeMapper.toDto(lessonType);
         if (applicationProperties.getElasticsearch().isEnabled()) {

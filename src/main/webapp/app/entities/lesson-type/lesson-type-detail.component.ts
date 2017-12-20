@@ -24,8 +24,8 @@ export class LessonTypeDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
+        this.subscription = this.route.data.subscribe((data: {lessonType: LessonType}) => {
+            this.lessonType = data.lessonType;
         });
         this.registerChangeInLessonTypes();
     }
@@ -35,6 +35,7 @@ export class LessonTypeDetailComponent implements OnInit, OnDestroy {
             this.lessonType = lessonType;
         });
     }
+
     previousState() {
         window.history.back();
     }

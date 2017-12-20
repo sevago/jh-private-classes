@@ -1,6 +1,6 @@
 
 <div *ngIf="lessonType">
-    <h2><span>Lesson Type</span> {{lessonType.id}}</h2>
+    <h2><span>Lesson Type</span> {{lessonType.description}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <dl class="row-md jh-entity-details">
@@ -12,8 +12,8 @@
         <dd>
             <span>{{lessonType.ratio}}</span>
         </dd>
-        <dt><span>User</span></dt>
-        <dd>
+        <dt *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>User</span></dt>
+        <dd *jhiHasAnyAuthority="'ROLE_ADMIN'">
             {{lessonType.userLogin}}
         </dd>
     </dl>

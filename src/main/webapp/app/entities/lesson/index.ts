@@ -6,3 +6,4 @@ export * from './lesson-delete-dialog.component';
 export * from './lesson-detail.component';
 export * from './lesson.component';
 export * from './lesson.route';
+export * from './lesson.resolve';

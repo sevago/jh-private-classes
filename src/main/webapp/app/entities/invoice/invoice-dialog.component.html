@@ -7,7 +7,7 @@
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
-        <div class="form-group" [hidden]="!invoice.id">
+        <div *jhiHasAnyAuthority="'ROLE_ADMIN'" class="form-group" [hidden]="!invoice.id">
             <label for="id">ID</label>
             <input type="text" class="form-control" id="id" name="id"
                    [(ngModel)]="invoice.id" readonly />

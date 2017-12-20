@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 
 import { PrivateclassesSharedModule } from '../../shared';
 import {
+    LessonResolve,
     LessonService,
     LessonPopupService,
     LessonComponent,
@@ -45,6 +46,7 @@ const ENTITY_STATES = [
         LessonService,
         LessonPopupService,
         LessonResolvePagingParams,
+        LessonResolve,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

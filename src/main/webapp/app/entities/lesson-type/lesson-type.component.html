@@ -29,19 +29,19 @@
         <table class="table table-striped">
             <thead>
             <tr>
-            <th><span>ID</span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>ID</span></th>
             <th><span>Description</span></th>
             <th><span>Ratio</span></th>
-            <th><span>User</span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>User</span></th>
             <th></th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let lessonType of lessonTypes ;trackBy: trackId">
-                <td><a [routerLink]="['../lesson-type', lessonType.id ]">{{lessonType.id}}</a></td>
+                <td *jhiHasAnyAuthority="'ROLE_ADMIN'"><a [routerLink]="['../lesson-type', lessonType.id ]">{{lessonType.id}}</a></td>
                 <td>{{lessonType.description}}</td>
                 <td>{{lessonType.ratio}}</td>
-                <td>
+                <td *jhiHasAnyAuthority="'ROLE_ADMIN'">
                     {{lessonType.userLogin}}
                 </td>
                 <td class="text-right">

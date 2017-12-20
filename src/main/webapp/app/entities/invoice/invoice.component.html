@@ -29,7 +29,7 @@
         <table class="table table-striped">
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th jhiSortBy="id"><span>ID</span> <span class="fa fa-sort"></span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'" jhiSortBy="id"><span>ID</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="number"><span>Number</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="periodStartDate"><span>Period Start Date</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="periodEndDate"><span>Period End Date</span> <span class="fa fa-sort"></span></th>
@@ -44,7 +44,7 @@
             </thead>
             <tbody>
             <tr *ngFor="let invoice of invoices ;trackBy: trackId">
-                <td><a [routerLink]="['../invoice', invoice.id ]">{{invoice.id}}</a></td>
+                <td *jhiHasAnyAuthority="'ROLE_ADMIN'"><a [routerLink]="['../invoice', invoice.id ]">{{invoice.id}}</a></td>
                 <td>{{invoice.number}}</td>
                 <td>{{invoice.periodStartDate | date:'mediumDate'}}</td>
                 <td>{{invoice.periodEndDate | date:'mediumDate'}}</td>

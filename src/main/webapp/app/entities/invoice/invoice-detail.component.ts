@@ -24,8 +24,8 @@ export class InvoiceDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
+        this.subscription = this.route.data.subscribe((data: {invoice: Invoice}) => {
+            this.invoice = data.invoice;
         });
         this.registerChangeInInvoices();
     }

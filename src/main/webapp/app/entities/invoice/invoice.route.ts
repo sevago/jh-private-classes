@@ -8,6 +8,7 @@ import { InvoiceComponent } from './invoice.component';
 import { InvoiceDetailComponent } from './invoice-detail.component';
 import { InvoicePopupComponent } from './invoice-dialog.component';
 import { InvoiceDeletePopupComponent } from './invoice-delete-dialog.component';
+import { InvoiceResolve } from './invoice.resolve';
 
 @Injectable()
 export class InvoiceResolvePagingParams implements Resolve<any> {
@@ -44,7 +45,10 @@ export const invoiceRoute: Routes = [
             authorities: ['ROLE_USER'],
             pageTitle: 'Invoices'
         },
-        canActivate: [UserRouteAccessService]
+        canActivate: [UserRouteAccessService],
+        resolve: {
+            invoice: InvoiceResolve
+        }
     }
 ];
 

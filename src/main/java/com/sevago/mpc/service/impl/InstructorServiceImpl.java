@@ -1,6 +1,7 @@
 package com.sevago.mpc.service.impl;
 
 import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.repository.UserRepository;
 import com.sevago.mpc.security.AuthoritiesConstants;
 import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.InstructorService;
@@ -9,6 +10,7 @@ import com.sevago.mpc.repository.InstructorRepository;
 import com.sevago.mpc.repository.search.InstructorSearchRepository;
 import com.sevago.mpc.service.dto.InstructorDTO;
 import com.sevago.mpc.service.mapper.InstructorMapper;
+import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,11 +42,14 @@ public class InstructorServiceImpl implements InstructorService{
 
     private final ApplicationProperties applicationProperties;
 
-    public InstructorServiceImpl(InstructorRepository instructorRepository, InstructorMapper instructorMapper, InstructorSearchRepository instructorSearchRepository, ApplicationProperties applicationProperties) {
+    private final UserRepository userRepository;
+
+    public InstructorServiceImpl(InstructorRepository instructorRepository, InstructorMapper instructorMapper, InstructorSearchRepository instructorSearchRepository, ApplicationProperties applicationProperties, UserRepository userRepository) {
         this.instructorRepository = instructorRepository;
         this.instructorMapper = instructorMapper;
         this.instructorSearchRepository = instructorSearchRepository;
         this.applicationProperties = applicationProperties;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -57,6 +62,12 @@ public class InstructorServiceImpl implements InstructorService{
     public InstructorDTO save(InstructorDTO instructorDTO) {
         log.debug("Request to save Instructor : {}", instructorDTO);
         Instructor instructor = instructorMapper.toEntity(instructorDTO);
+        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().get());
+            instructor.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                new InternalServerErrorException("Current user login not found"))
+            ).get());
+        }
         instructor = instructorRepository.save(instructor);
         InstructorDTO result = instructorMapper.toDto(instructor);
         if (applicationProperties.getElasticsearch().isEnabled()) {

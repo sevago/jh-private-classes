@@ -29,30 +29,30 @@
         <table class="table table-striped">
             <thead>
             <tr>
-            <th><span>ID</span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>ID</span></th>
             <th><span>Name</span></th>
             <th><span>Address</span></th>
             <th><span>Phone Number</span></th>
             <th><span>Email</span></th>
-            <th><span>User</span></th>
             <th><span>Rate</span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>User</span></th>
             <th></th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let instructor of instructors ;trackBy: trackId">
-                <td><a [routerLink]="['../instructor', instructor.id ]">{{instructor.id}}</a></td>
+                <td *jhiHasAnyAuthority="'ROLE_ADMIN'"><a [routerLink]="['../instructor', instructor.id ]">{{instructor.id}}</a></td>
                 <td>{{instructor.name}}</td>
                 <td>{{instructor.address}}</td>
                 <td>{{instructor.phoneNumber}}</td>
                 <td>{{instructor.email}}</td>
                 <td>
-                    {{instructor.userLogin}}
-                </td>
-                <td>
                     <span *ngFor="let rate of instructor.rates; let last = last">
-                            <a class="form-control-static" [routerLink]="['../rate', rate?.id ]">{{rate.description}}</a>{{last ? '' : ', '}}
-                        </span>
+                        <a class="form-control-static" [routerLink]="['../rate', rate?.id ]">{{rate.description}}</a>{{last ? '' : ', '}}
+                    </span>
+                </td>
+                <td *jhiHasAnyAuthority="'ROLE_ADMIN'">
+                    {{instructor.userLogin}}
                 </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">

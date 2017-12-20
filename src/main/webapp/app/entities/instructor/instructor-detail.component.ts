@@ -24,8 +24,8 @@ export class InstructorDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
+        this.subscription = this.route.data.subscribe((data: {instructor: Instructor}) => {
+            this.instructor = data.instructor;
         });
         this.registerChangeInInstructors();
     }
@@ -35,6 +35,7 @@ export class InstructorDetailComponent implements OnInit, OnDestroy {
             this.instructor = instructor;
         });
     }
+
     previousState() {
         window.history.back();
     }

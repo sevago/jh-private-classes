@@ -7,7 +7,7 @@
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
-        <div class="form-group" [hidden]="!lessonType.id">
+        <div *jhiHasAnyAuthority="'ROLE_ADMIN'" class="form-group" [hidden]="!lessonType.id">
             <label for="id">ID</label>
             <input type="text" class="form-control" id="id" name="id"
                    [(ngModel)]="lessonType.id" readonly />
@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div *jhiHasAnyAuthority="'ROLE_ADMIN'" class="form-group">
             <label class="form-control-label" for="field_user">User</label>
             <select class="form-control" id="field_user" name="user" [(ngModel)]="lessonType.userId" >
                 <option [ngValue]="null"></option>

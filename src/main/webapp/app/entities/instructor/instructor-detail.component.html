@@ -1,6 +1,6 @@
 
 <div *ngIf="instructor">
-    <h2><span>Instructor</span> {{instructor.id}}</h2>
+    <h2><span>Instructor</span> {{instructor.name}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <dl class="row-md jh-entity-details">
@@ -20,15 +20,15 @@
         <dd>
             <span>{{instructor.email}}</span>
         </dd>
-        <dt><span>User</span></dt>
-        <dd>
-            {{instructor.userLogin}}
-        </dd>
         <dt><span>Rate</span></dt>
         <dd>
             <span *ngFor="let rate of instructor.rates; let last = last">
                 <a [routerLink]="['/rate', rate?.id ]">{{rate.description}}</a>{{last ? '' : ', '}}
             </span>
+        </dd>
+        <dt *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>User</span></dt>
+        <dd *jhiHasAnyAuthority="'ROLE_ADMIN'">
+            {{instructor.userLogin}}
         </dd>
     </dl>
 

@@ -17,7 +17,7 @@ lessonTypes: LessonType[];
     currentAccount: any;
     eventSubscriber: Subscription;
     currentSearch: string;
-    elasticsearchEnabled: boolean;
+    elasticsearchEnabled = false;
 
     constructor(
         private lessonTypeService: LessonTypeService,

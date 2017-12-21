@@ -29,7 +29,7 @@ currentAccount: any;
     predicate: any;
     previousPage: any;
     reverse: any;
-    elasticsearchEnabled: boolean;
+    elasticsearchEnabled = false;
 
     constructor(
         private studentService: StudentService,

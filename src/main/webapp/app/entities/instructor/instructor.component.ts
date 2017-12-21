@@ -17,7 +17,7 @@ instructors: Instructor[];
     currentAccount: any;
     eventSubscriber: Subscription;
     currentSearch: string;
-    elasticsearchEnabled: boolean;
+    elasticsearchEnabled = false;
 
     constructor(
         private instructorService: InstructorService,

@@ -17,7 +17,7 @@ activities: Activity[];
     currentAccount: any;
     eventSubscriber: Subscription;
     currentSearch: string;
-    elasticsearchEnabled: boolean;
+    elasticsearchEnabled = false;
 
     constructor(
         private activityService: ActivityService,

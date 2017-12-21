@@ -17,7 +17,7 @@ rates: Rate[];
     currentAccount: any;
     eventSubscriber: Subscription;
     currentSearch: string;
-    elasticsearchEnabled: boolean;
+    elasticsearchEnabled = false;
 
     constructor(
         private rateService: RateService,

@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import {JhiAlertService, JhiEventManager} from 'ng-jhipster';
 
 import { Account, LoginModalService, Principal } from '../shared';
-import {Lesson} from '../entities/lesson/lesson.model';
-import {LessonService} from '../entities/lesson/lesson.service';
-import {ResponseWrapper} from '../shared/model/response-wrapper.model';
+import { Lesson } from '../entities/lesson/lesson.model';
+import { LessonService } from '../entities/lesson/lesson.service';
+import { ResponseWrapper } from '../shared/model/response-wrapper.model';
+import { Subscription } from 'rxjs/Rx';
 
 @Component({
     selector: 'jhi-home',
@@ -15,10 +16,11 @@ import {ResponseWrapper} from '../shared/model/response-wrapper.model';
     ]
 
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
     account: Account;
     modalRef: NgbModalRef;
     lessons: Lesson[];
+    eventSubscriber: Subscription;
 
     constructor(
         private principal: Principal,
@@ -31,12 +33,25 @@ export class HomeComponent implements OnInit {
 
     ngOnInit() {
         if (this.isAuthenticated()) {
+            this.loadAllLessons();
             this.principal.identity().then((account) => {
                 this.account = account;
             });
-            this.registerAuthenticationSuccess();
-            this.loadAllLessons();
         }
+        this.registerAuthenticationSuccess();
+        this.registerChangeInLessons();
+        console.log('*** Instantiating Home Component ***');
+    }
+
+    ngOnDestroy() {
+        this.eventManager.destroy(this.eventSubscriber);
+        console.log('*** Destroying Home Component ***');
+    }
+
+    registerChangeInLessons() {
+        this.eventSubscriber = this.eventManager.subscribe(
+            'lessonListModification',
+            (response) => this.loadAllLessons());
     }
 
     registerAuthenticationSuccess() {
@@ -44,6 +59,7 @@ export class HomeComponent implements OnInit {
             this.principal.identity().then((account) => {
                 this.account = account;
             });
+            this.loadAllLessons();
         });
     }
 
@@ -58,7 +74,6 @@ export class HomeComponent implements OnInit {
     loadAllLessons() {
         this.lessonService.query().subscribe(
             (res: ResponseWrapper) => {
-                console.log(res.json)
                 this.lessons = res.json;
             },
             (res: ResponseWrapper) => this.onError(res.json)

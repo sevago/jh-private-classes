@@ -127,6 +127,7 @@ currentAccount: any;
     trackId(index: number, item: Lesson) {
         return item.id;
     }
+
     registerChangeInLessons() {
         this.eventSubscriber = this.eventManager.subscribe('lessonListModification', (response) => this.loadAll());
     }

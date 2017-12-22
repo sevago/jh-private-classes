@@ -45,12 +45,6 @@ Generic styles
 
 /* other generic styles */
 
-.mpc-body {
-    background: #ededed;
-    padding-top: 15px;
-    padding-bottom: 100%;
-}
-
 .jh-card {
     padding: 1.5%;
     border: none;
@@ -257,3 +251,22 @@ Social Buttons
     color: #fff;
 }
 /* jhipster-needle-css-add-main JHipster will add new css style */
+
+.mpc-body {
+    background: #ededed;
+    padding-top: 15px;
+    padding-bottom: 100%;
+}
+
+agm-map {
+    margin-top: 5px;
+    height: 400px;
+}
+
+.mpc-map-margin-top {
+    margin-top: 15px;
+}
+
+.mpc-map-margin-bottom {
+    margin-bottom: 15px;
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
@@ -11,6 +11,7 @@ import { LocationPopupService } from './location-popup.service';
 import { LocationService } from './location.service';
 import { User, UserService } from '../../shared';
 import { ResponseWrapper } from '../../shared';
+import { GMapsService } from '../../services/google-maps.service';
 
 @Component({
     selector: 'jhi-location-dialog',
@@ -20,6 +21,10 @@ export class LocationDialogComponent implements OnInit {
 
     location: Location;
     isSaving: boolean;
+    latitude: number;
+    longitude: number;
+    locationChosen = false;
+    geocodingError: any;
 
     users: User[];
 
@@ -28,11 +33,14 @@ export class LocationDialogComponent implements OnInit {
         private jhiAlertService: JhiAlertService,
         private locationService: LocationService,
         private userService: UserService,
-        private eventManager: JhiEventManager
+        private eventManager: JhiEventManager,
+        private gMapsService: GMapsService,
+        private __zone: NgZone
     ) {
     }
 
     ngOnInit() {
+        this.showLocationOnMap();
         this.isSaving = false;
         this.userService.query()
             .subscribe((res: ResponseWrapper) => { this.users = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
@@ -74,6 +82,26 @@ export class LocationDialogComponent implements OnInit {
 
     trackUserById(index: number, item: User) {
         return item.id;
+    }
+
+    showLocationOnMap() {
+        if (this.location.address) {
+            this.gMapsService.getLatLan(this.location.address)
+                .subscribe(
+                    (result) => {
+                        this.__zone.run(() => {
+                            this.latitude = result.lat();
+                            this.longitude = result.lng();
+                            this.geocodingError = undefined;
+                            this.locationChosen = true;
+                        })
+                    },
+                    (error) => {
+                        this.geocodingError = 'Address not found!';
+                        this.locationChosen = false;
+                    }
+                );
+        }
     }
 }
 

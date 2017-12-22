@@ -7,6 +7,8 @@ export class Location implements BaseEntity {
         public address?: string,
         public description?: string,
         public userId?: number,
+        public latitude?: number,
+        public longitude?: number
     ) {
     }
 }

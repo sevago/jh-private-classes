@@ -31,8 +31,8 @@
             <tr>
             <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>ID</span></th>
             <th><span>Name</span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>Description</span></th>
             <th><span>Address</span></th>
-            <th><span>Description</span></th>
             <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>User</span></th>
             <th></th>
             </tr>
@@ -41,11 +41,9 @@
             <tr *ngFor="let location of locations ;trackBy: trackId">
                 <td *jhiHasAnyAuthority="'ROLE_ADMIN'"><a [routerLink]="['../location', location.id ]">{{location.id}}</a></td>
                 <td>{{location.name}}</td>
+                <td *jhiHasAnyAuthority="'ROLE_ADMIN'">{{location.description}}</td>
                 <td>{{location.address}}</td>
-                <td>{{location.description}}</td>
-                <td *jhiHasAnyAuthority="'ROLE_ADMIN'">
-                    {{location.userLogin}}
-                </td>
+                <td *jhiHasAnyAuthority="'ROLE_ADMIN'">{{location.userLogin}}</td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"

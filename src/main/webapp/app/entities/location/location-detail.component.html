@@ -8,30 +8,36 @@
         <dd>
             <span>{{location.name}}</span>
         </dd>
+        <dt *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>Description</span></dt>
+        <dd *jhiHasAnyAuthority="'ROLE_ADMIN'">
+            <span>{{location.description}}</span>
+        </dd>
         <dt><span>Address</span></dt>
         <dd>
             <span>{{location.address}}</span>
-        </dd>
-        <dt><span>Description</span></dt>
-        <dd>
-            <span>{{location.description}}</span>
         </dd>
         <dt *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>User</span></dt>
         <dd *jhiHasAnyAuthority="'ROLE_ADMIN'">
             {{location.userLogin}}
         </dd>
     </dl>
-
-    <button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
-    </button>
-
-    <button type="button"
-            [routerLink]="['/', { outlets: { popup: 'location/'+ location.id + '/edit'} }]"
-            replaceUrl="true"
-            class="btn btn-primary">
-        <span class="fa fa-pencil"></span>&nbsp;<span> Edit</span>
-    </button>
+    <div class="mpc-map-margin-bottom" *ngIf="locationChosen">
+        <agm-map [zoom]="15" [latitude]="latitude" [longitude]="longitude">
+            <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
+        </agm-map>
+    </div>
+    <div>
+        <p></p>
+        <button type="submit"
+                (click)="previousState()"
+                class="btn btn-info">
+            <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
+        </button>
+        <button type="button"
+                [routerLink]="['/', { outlets: { popup: 'location/'+ location.id + '/edit'} }]"
+                replaceUrl="true"
+                class="btn btn-primary">
+            <span class="fa fa-pencil"></span>&nbsp;<span> Edit</span>
+        </button>
+    </div>
 </div>

@@ -23,22 +23,37 @@
                 </small>
             </div>
         </div>
+        <div *jhiHasAnyAuthority="'ROLE_ADMIN'" class="form-group">
+            <label class="form-control-label" for="field_description">Description</label>
+            <input type="text" class="form-control" name="description" id="field_description"
+                   [(ngModel)]="location.description" />
+        </div>
         <div class="form-group">
             <label class="form-control-label" for="field_address">Address</label>
             <input type="text" class="form-control" name="address" id="field_address"
                 [(ngModel)]="location.address" />
+            <div [hidden]="!geocodingError">
+                <small class="form-text text-danger">
+                    {{geocodingError}}
+                </small>
+            </div>
         </div>
-        <div class="form-group">
-            <label class="form-control-label" for="field_description">Description</label>
-            <input type="text" class="form-control" name="description" id="field_description"
-                [(ngModel)]="location.description" />
-        </div>
-
+        <button type="button"
+                [disabled]="!location.address"
+                (click)="showLocationOnMap()"
+                class="btn btn-info">
+            <span>Show address on map</span>
+        </button>
         <div *jhiHasAnyAuthority="'ROLE_ADMIN'" class="form-group">
             <label class="form-control-label" for="field_user">User</label>
             <select class="form-control" id="field_user" name="user" [(ngModel)]="location.userId" >
                 <option [ngValue]="userOption.id" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
             </select>
+        </div>
+        <div class="mpc-map-margin-top" *ngIf="locationChosen">
+            <agm-map [zoom]="15" [latitude]="latitude" [longitude]="longitude">
+                <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
+            </agm-map>
         </div>
     </div>
     <div class="modal-footer">

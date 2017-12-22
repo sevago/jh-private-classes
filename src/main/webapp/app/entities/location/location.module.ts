@@ -1,5 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AgmCoreModule } from '@agm/core';
 
 import { PrivateclassesSharedModule } from '../../shared';
 import { PrivateclassesAdminModule } from '../../admin/admin.module';
@@ -16,6 +17,7 @@ import {
     locationRoute,
     locationPopupRoute,
 } from './';
+import { GMapsService } from '../../services/google-maps.service';
 
 const ENTITY_STATES = [
     ...locationRoute,
@@ -26,7 +28,10 @@ const ENTITY_STATES = [
     imports: [
         PrivateclassesSharedModule,
         PrivateclassesAdminModule,
-        RouterModule.forChild(ENTITY_STATES)
+        RouterModule.forChild(ENTITY_STATES),
+        AgmCoreModule.forRoot({
+            apiKey: 'AIzaSyDZ4jTUBY_rymf53VvjZRVGWD0hcG3bHik'
+        })
     ],
     declarations: [
         LocationComponent,
@@ -47,6 +52,7 @@ const ENTITY_STATES = [
         LocationService,
         LocationPopupService,
         LocationResolve,
+        GMapsService,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -1,19 +1,32 @@
-<div class="row" [ngSwitch]="isAuthenticated()">
-    <div *ngSwitchCase="false" class="col-md-4">
-        <span class="hipster img-fluid rounded"></span>
-    </div>
-    <div *ngSwitchCase="false" class="col-md-8">
-        <h1 class="display-4">Private classes and statements home page!</h1>
-        <p class="lead">This is your homepage</p>
-        <div class="alert alert-warning">
-            <span>You don't have an account yet?</span>
-            <a class="alert-link" routerLink="register">Register a new account</a>
+<div [ngSwitch]="isAuthenticated()">
+    <div class="row">
+        <div *ngSwitchCase="false" class="col-md-3">
+            <span class="hipster img-fluid rounded"></span>
+        </div>
+        <div *ngSwitchCase="false" class="col-md-9">
+            <h1 class="display-4">Welcome!</h1>
+            <p class="lead">Private Classes Application will help to track your private lessons and manage invoices.</p>
+            <div class="alert alert-warning">
+                <span>You don't have an account yet?</span>
+                <a class="alert-link" routerLink="register">Register a new account</a>
+            </div>
+        </div>
+        <div *ngSwitchCase="true" class="col-sm-8">
+            <h2>Your Private Classes</h2>
+        </div>
+        <div *ngSwitchCase="true" class="col-sm-4">
+            <button class="btn btn-primary float-right jh-create-entity create-lesson"
+                    [routerLink]="['/', { outlets: { popup: ['lesson-new'] } }]"
+                    [ngbTooltip]="addTooltip" placement="bottom">
+                <span class="fa fa-plus"></span>
+                <ng-template #addTooltip>
+                    <span>Add New Class</span>
+                </ng-template>
+            </button>
         </div>
     </div>
-    <div *ngSwitchCase="true">
-        <h2>
-            <span>Here is your private classes:</span>
-        </h2>
+    <jhi-alert></jhi-alert>
+    <div *ngSwitchCase="true" class="row">
         <div class="table-responsive" *ngIf="lessons">
             <table class="table table-striped">
                 <thead>
@@ -95,7 +108,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="alert alert-success" *ngSwitchCase="true">
+        <div class="alert alert-success">
             <span *ngIf="account"> You are logged in as user "{{account.login}}"</span>
         </div>
     </div>

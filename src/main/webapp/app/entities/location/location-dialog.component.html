@@ -38,19 +38,19 @@
                 </small>
             </div>
         </div>
-        <button type="button"
-                [disabled]="!location.address"
-                (click)="showLocationOnMap()"
-                class="btn btn-info">
-            <span>Show address on map</span>
-        </button>
         <div *jhiHasAnyAuthority="'ROLE_ADMIN'" class="form-group">
             <label class="form-control-label" for="field_user">User</label>
             <select class="form-control" id="field_user" name="user" [(ngModel)]="location.userId" >
                 <option [ngValue]="userOption.id" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
             </select>
         </div>
-        <div class="mpc-map-margin-top" *ngIf="locationChosen">
+        <button type="button"
+                [disabled]="!location.address"
+                (click)="showLocationOnMap()"
+                class="btn btn-info">
+            <span>Show address on map</span>
+        </button>
+        <div class="mt-15" *ngIf="locationChosen">
             <agm-map [zoom]="15" [latitude]="latitude" [longitude]="longitude">
                 <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
             </agm-map>

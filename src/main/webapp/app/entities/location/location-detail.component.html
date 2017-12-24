@@ -21,7 +21,7 @@
             {{location.userLogin}}
         </dd>
     </dl>
-    <div class="mpc-map-margin-bottom" *ngIf="locationChosen">
+    <div class="mb-15" *ngIf="locationChosen">
         <agm-map [zoom]="15" [latitude]="latitude" [longitude]="longitude">
             <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
         </agm-map>

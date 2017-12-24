@@ -3,10 +3,10 @@ import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import {JhiAlertService, JhiEventManager} from 'ng-jhipster';
 
 import { Account, LoginModalService, Principal } from '../shared';
-import { Lesson } from '../entities/lesson/lesson.model';
-import { LessonService } from '../entities/lesson/lesson.service';
 import { ResponseWrapper } from '../shared/model/response-wrapper.model';
 import { Subscription } from 'rxjs/Rx';
+import { Lesson, LessonService } from '../entities/lesson';
+import {Invoice, InvoiceService} from '../entities/invoice';
 
 @Component({
     selector: 'jhi-home',
@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     account: Account;
     modalRef: NgbModalRef;
     lessons: Lesson[];
+    invoices: Invoice[];
     eventSubscriber: Subscription;
 
     constructor(
@@ -27,19 +28,20 @@ export class HomeComponent implements OnInit, OnDestroy {
         private loginModalService: LoginModalService,
         private eventManager: JhiEventManager,
         private jhiAlertService: JhiAlertService,
-        private lessonService: LessonService
+        private lessonService: LessonService,
+        private invoiceService: InvoiceService
     ) {
     }
 
     ngOnInit() {
         if (this.isAuthenticated()) {
-            this.loadAllLessons();
+            this.loadAllData();
             this.principal.identity().then((account) => {
                 this.account = account;
             });
         }
         this.registerAuthenticationSuccess();
-        this.registerChangeInLessons();
+        this.registerChangeInEntities();
         console.log('*** Instantiating Home Component ***');
     }
 
@@ -48,10 +50,13 @@ export class HomeComponent implements OnInit, OnDestroy {
         console.log('*** Destroying Home Component ***');
     }
 
-    registerChangeInLessons() {
+    registerChangeInEntities() {
         this.eventSubscriber = this.eventManager.subscribe(
             'lessonListModification',
-            (response) => this.loadAllLessons());
+            (response) => this.loadAllData());
+        this.eventSubscriber = this.eventManager.subscribe(
+            'invoiceListModification',
+            (response) => this.loadAllData());
     }
 
     registerAuthenticationSuccess() {
@@ -59,7 +64,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.principal.identity().then((account) => {
                 this.account = account;
             });
-            this.loadAllLessons();
+            this.loadAllData();
         });
     }
 
@@ -71,10 +76,17 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.modalRef = this.loginModalService.open();
     }
 
-    loadAllLessons() {
+    loadAllData() {
         this.lessonService.query().subscribe(
             (res: ResponseWrapper) => {
                 this.lessons = res.json;
+            },
+            (res: ResponseWrapper) => this.onError(res.json)
+        );
+
+        this.invoiceService.query().subscribe(
+            (res: ResponseWrapper) => {
+                this.invoices = res.json;
             },
             (res: ResponseWrapper) => this.onError(res.json)
         );

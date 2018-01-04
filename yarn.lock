@@ -36,6 +36,12 @@
     minimist "^1.2.0"
     rxjs "^5.5.2"
 
+"@angular/animations@^5.1.2":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-5.1.2.tgz#464df9a9e30c7a8146118fdd9bff82cdfcf97d7e"
+  dependencies:
+    tslib "^1.7.1"
+
 "@angular/cli@1.4.2":
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/@angular/cli/-/cli-1.4.2.tgz#220a54c7e12303157cc289f4306fa46d080705ac"
@@ -279,6 +285,24 @@ alphanum-sort@^1.0.1, alphanum-sort@^1.0.2:
 amdefine@>=0.0.4, amdefine@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
+
+angular-calendar@^0.22.2:
+  version "0.22.2"
+  resolved "https://registry.yarnpkg.com/angular-calendar/-/angular-calendar-0.22.2.tgz#3ac7e718929e61b23f371d3ced7456c62ad330cc"
+  dependencies:
+    angular-draggable-droppable "^1.1.1"
+    angular-resizable-element "^1.2.4"
+    calendar-utils "0.0.59"
+    date-fns "^1.28.5"
+    positioning "^1.3.1"
+
+angular-draggable-droppable@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/angular-draggable-droppable/-/angular-draggable-droppable-1.1.1.tgz#70b3b601daaf65a1b3f73d8a4de8683e7fa22356"
+
+angular-resizable-element@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/angular-resizable-element/-/angular-resizable-element-1.2.4.tgz#983828eaced18f432814581ab4c25892c26197d9"
 
 angular2-template-loader@0.6.2:
   version "0.6.2"
@@ -989,6 +1013,10 @@ cache-base@^1.0.1:
     to-object-path "^0.3.0"
     union-value "^1.0.0"
     unset-value "^1.0.0"
+
+calendar-utils@0.0.59:
+  version "0.0.59"
+  resolved "https://registry.yarnpkg.com/calendar-utils/-/calendar-utils-0.0.59.tgz#ab809c215e7811eb0f8d961985cacce6af3d3db3"
 
 callsite@1.0.0:
   version "1.0.0"
@@ -1823,6 +1851,10 @@ dashdash@^1.12.0:
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
   dependencies:
     assert-plus "^1.0.0"
+
+date-fns@^1.28.5:
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.29.0.tgz#12e609cdcb935127311d04d33334e2960a2a54e6"
 
 date-now@^0.1.4:
   version "0.1.4"
@@ -6004,6 +6036,10 @@ portscanner@2.1.1:
   dependencies:
     async "1.5.2"
     is-number-like "^1.0.3"
+
+positioning@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/positioning/-/positioning-1.3.1.tgz#6ff15e9bf8d8fe341ba1b3900d587e977b5554ec"
 
 posix-character-classes@^0.1.0:
   version "0.1.1"

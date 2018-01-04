@@ -31,6 +31,7 @@
         <div class="form-group">
             <label class="form-control-label" for="field_address">Address</label>
             <input type="text" class="form-control" name="address" id="field_address"
+                [formControl]="address"
                 [(ngModel)]="location.address" />
             <div [hidden]="!geocodingError">
                 <small class="form-text text-danger">
@@ -44,12 +45,6 @@
                 <option [ngValue]="userOption.id" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
             </select>
         </div>
-        <button type="button"
-                [disabled]="!location.address"
-                (click)="showLocationOnMap()"
-                class="btn btn-info">
-            <span>Show address on map</span>
-        </button>
         <div class="mt-15" *ngIf="locationChosen">
             <agm-map [zoom]="15" [latitude]="latitude" [longitude]="longitude">
                 <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>

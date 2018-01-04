@@ -1,5 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 import { AgmCoreModule } from '@agm/core';
 
 import { PrivateclassesSharedModule } from '../../shared';
@@ -26,6 +27,7 @@ const ENTITY_STATES = [
 
 @NgModule({
     imports: [
+        ReactiveFormsModule,
         PrivateclassesSharedModule,
         PrivateclassesAdminModule,
         RouterModule.forChild(ENTITY_STATES),

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
-import { Observable } from 'rxjs/Rx';
+import {Observable, Subscription} from 'rxjs/Rx';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
@@ -12,19 +12,23 @@ import { LocationService } from './location.service';
 import { User, UserService } from '../../shared';
 import { ResponseWrapper } from '../../shared';
 import { GMapsService } from '../../services/google-maps.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'jhi-location-dialog',
     templateUrl: './location-dialog.component.html'
 })
-export class LocationDialogComponent implements OnInit {
-
+export class LocationDialogComponent implements OnInit, OnDestroy {
     location: Location;
     isSaving: boolean;
     latitude: number;
     longitude: number;
     locationChosen = false;
     geocodingError: any;
+    address = new FormControl();
+    valueChangesSubscription: Subscription;
+
+    subscriber: any;
 
     users: User[];
 
@@ -40,10 +44,14 @@ export class LocationDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.showLocationOnMap();
+        this.valueChangesSubscription = this.onChanges();
         this.isSaving = false;
         this.userService.query()
             .subscribe((res: ResponseWrapper) => { this.users = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
+    }
+
+    ngOnDestroy(): void {
+        this.valueChangesSubscription.unsubscribe();
     }
 
     clear() {
@@ -84,24 +92,26 @@ export class LocationDialogComponent implements OnInit {
         return item.id;
     }
 
-    showLocationOnMap() {
-        if (this.location.address) {
-            this.gMapsService.getLatLan(this.location.address)
-                .subscribe(
-                    (result) => {
-                        this.__zone.run(() => {
-                            this.latitude = result.lat();
-                            this.longitude = result.lng();
-                            this.geocodingError = undefined;
-                            this.locationChosen = true;
-                        })
-                    },
-                    (error) => {
-                        this.geocodingError = 'Address not found!';
-                        this.locationChosen = false;
-                    }
-                );
-        }
+    onChanges() {
+        return this.address.valueChanges
+            .debounceTime(500)
+            .distinctUntilChanged()
+            .filter((address) => address)
+            .switchMap((address) => this.gMapsService.getLatLan(address))
+            .subscribe(
+                (result) => {
+                    this.__zone.run(() => {
+                        this.latitude = result.lat();
+                        this.longitude = result.lng();
+                        this.geocodingError = undefined;
+                        this.locationChosen = true;
+                    })
+                },
+                (error) => {
+                    this.geocodingError = 'Address not found!';
+                    this.locationChosen = false;
+                }
+            );
     }
 }
 

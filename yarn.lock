@@ -36,9 +36,9 @@
     minimist "^1.2.0"
     rxjs "^5.5.2"
 
-"@angular/animations@^5.1.2":
-  version "5.1.2"
-  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-5.1.2.tgz#464df9a9e30c7a8146118fdd9bff82cdfcf97d7e"
+"@angular/animations@4.3.2":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-4.3.2.tgz#b4db17d743c8cd6952a657e76511da08432fb23f"
   dependencies:
     tslib "^1.7.1"
 

@@ -7,6 +7,7 @@ import { Ng2Webstorage } from 'ng2-webstorage';
 import { PrivateclassesSharedModule, UserRouteAccessService } from './shared';
 import { PrivateclassesAppRoutingModule} from './app-routing.module';
 import { PrivateclassesHomeModule } from './home/home.module';
+import { PrivateclassesCalendarModule } from './calendar/calendar.module';
 import { PrivateclassesAdminModule } from './admin/admin.module';
 import { PrivateclassesAccountModule } from './account/account.module';
 import { PrivateclassesEntityModule } from './entities/entity.module';
@@ -34,6 +35,7 @@ import {
         PrivateclassesAdminModule,
         PrivateclassesAccountModule,
         PrivateclassesEntityModule,
+        PrivateclassesCalendarModule,
         // jhipster-needle-angular-add-module JHipster will add new module here
     ],
     declarations: [

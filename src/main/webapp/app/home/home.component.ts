@@ -41,7 +41,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             });
         }
         this.registerAuthenticationSuccess();
-        this.registerChangeInEntities();
+        this.registerForChanges();
         console.log('*** Instantiating Home Component ***');
     }
 
@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         console.log('*** Destroying Home Component ***');
     }
 
-    registerChangeInEntities() {
+    registerForChanges() {
         this.eventSubscriber = this.eventManager.subscribe(
             'lessonListModification',
             (response) => this.loadAllData());

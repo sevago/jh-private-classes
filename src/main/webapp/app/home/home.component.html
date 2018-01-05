@@ -1,85 +1,58 @@
 <div [ngSwitch]="isAuthenticated()">
-    <div class="row">
-        <div *ngSwitchCase="false" class="col-md-3">
+    <div *ngSwitchCase="false" class="row">
+        <div class="col-md-3">
             <span class="hipster img-fluid rounded"></span>
         </div>
-        <div *ngSwitchCase="false" class="col-md-9">
+        <div class="col-md-9">
             <h1 class="display-4">Welcome!</h1>
             <p class="lead">Private Classes Application will help to track your private lessons and manage invoices.</p>
+            <p>
+                <span>To get started, please </span>
+                <a href="" (click)="login(); false">
+                    <i class="fa fa-sign-in" aria-hidden="true"></i>
+                    <span>Sign In</span>
+                </a>
+            </p>
             <div class="alert alert-warning">
-                <span>You don't have an account yet?</span>
+                <span>Don't have an account yet?</span>
                 <a class="alert-link" routerLink="register">Register a new account</a>
             </div>
-        </div>
-        <div *ngSwitchCase="true" class="col-sm-8">
-            <h2>Your Private Classes</h2>
-        </div>
-        <div *ngSwitchCase="true" class="col-sm-4">
-            <button class="btn btn-primary float-right jh-create-entity create-lesson"
-                    [routerLink]="['/', { outlets: { popup: ['lesson-new'] } }]"
-                    [ngbTooltip]="addTooltip" placement="bottom">
-                <span class="fa fa-plus"></span>
-                <ng-template #addTooltip>
-                    <span>Add New Class</span>
-                </ng-template>
-            </button>
         </div>
     </div>
     <jhi-alert></jhi-alert>
     <div *ngSwitchCase="true" class="row">
-        <div class="table-responsive" *ngIf="lessons">
+        <div class="col-sm-3">
+            <h2>Recent Classes</h2>
+        </div>
+        <div class="col-sm-1">
+            <button class="btn btn-primary float-left jh-create-entity"
+                    [routerLink]="['/', { outlets: { popup: ['lesson-new'] } }]"
+                    [ngbTooltip]="addClassTooltip" placement="bottom">
+                <span class="fa fa-plus"></span>
+                <ng-template #addClassTooltip>
+                    <span>Add New Class</span>
+                </ng-template>
+            </button>
+        </div>
+        <div class="table-responsive mt-2" *ngIf="lessons">
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th><span>ID</span></th>
                     <th><span>Date</span></th>
+                    <th><span>Students</span></th>
                     <th><span>Duration</span></th>
-                    <th><span>Total Charge</span></th>
-                    <th><span>Student</span></th>
-                    <th><span>Teaching Instructor</span></th>
-                    <th><span>Activity</span></th>
-                    <th><span>Location</span></th>
-                    <th><span>Lesson Type</span></th>
-                    <th><span>Rate</span></th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr *ngFor="let lesson of lessons ;trackBy: trackId">
-                    <td><a [routerLink]="['../lesson', lesson.id ]">{{lesson.id}}</a></td>
                     <td>{{lesson.date | date:'mediumDate'}}</td>
-                    <td>{{lesson.duration}}</td>
-                    <td>{{lesson.totalCharge}}</td>
                     <td>
-                                <span *ngFor="let student of lesson.students; let last = last">
-                                    <a class="form-control-static" [routerLink]="['../student', student?.id ]">{{student.firstName}}</a>{{last ? '' : ', '}}
-                                </span>
+                        <span *ngFor="let student of lesson.students; let last = last">
+                            <a class="form-control-static" [routerLink]="['../student', student?.id ]">{{student.name}}</a>{{last ? '' : ', '}}
+                        </span>
                     </td>
-                    <td>
-                        <div *ngIf="lesson.teachingInstructorId">
-                            <a [routerLink]="['../instructor', lesson.teachingInstructorId  ]" >{{lesson.teachingInstructorFirstName}}</a>
-                        </div>
-                    </td>
-                    <td>
-                        <div *ngIf="lesson.activityId">
-                            <a [routerLink]="['../activity', lesson.activityId  ]" >{{lesson.activityName}}</a>
-                        </div>
-                    </td>
-                    <td>
-                        <div *ngIf="lesson.locationId">
-                            <a [routerLink]="['../location', lesson.locationId  ]" >{{lesson.locationName}}</a>
-                        </div>
-                    </td>
-                    <td>
-                        <div *ngIf="lesson.lessonTypeId">
-                            <a [routerLink]="['../lesson-type', lesson.lessonTypeId  ]" >{{lesson.lessonTypeDescription}}</a>
-                        </div>
-                    </td>
-                    <td>
-                        <div *ngIf="lesson.rateId">
-                            <a [routerLink]="['../rate', lesson.rateId  ]" >{{lesson.rateDescription}}</a>
-                        </div>
-                    </td>
+                    <td>{{lesson.duration}} hour</td>
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
                             <button type="submit"
@@ -108,8 +81,68 @@
                 </tbody>
             </table>
         </div>
-        <div class="alert alert-success">
-            <span *ngIf="account"> You are logged in as user "{{account.login}}"</span>
+        <div class="col-sm-3">
+            <h2>Recent Invoices</h2>
         </div>
+        <div class="col-sm-1">
+            <button class="btn btn-primary float-left jh-create-entity"
+                    [routerLink]="['/', { outlets: { popup: ['invoice-new'] } }]"
+                    [ngbTooltip]="addInvoiceTooltip" placement="bottom">
+                <span class="fa fa-plus"></span>
+                <ng-template #addInvoiceTooltip>
+                    <span>Add New Invoice</span>
+                </ng-template>
+            </button>
+        </div>
+        <div class="table-responsive mt-2" *ngIf="invoices">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th><span>Period</span></th>
+                    <th><span>Bill To</span></th>
+                    <th><span>Amount</span></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let invoice of invoices ;trackBy: trackId">
+                    <td>{{invoice.periodStartDate | date:'mediumDate'}} to {{invoice.periodEndDate | date:'mediumDate'}}</td>
+                    <td>
+                        <div *ngIf="invoice.billToStudentId">
+                            <a [routerLink]="['../student', invoice.billToStudentId  ]" >{{invoice.billToStudentName}}</a>
+                        </div>
+                    </td>
+                    <td>${{invoice.totalAmount}}</td>
+                    <td class="text-right">
+                        <div class="btn-group flex-btn-group-container">
+                            <button type="submit"
+                                    [routerLink]="['../invoice', invoice.id ]"
+                                    class="btn btn-info btn-sm">
+                                <span class="fa fa-eye"></span>
+                                <span class="d-none d-md-inline">View</span>
+                            </button>
+                            <button type="submit"
+                                    [routerLink]="['/', { outlets: { popup: 'invoice/'+ invoice.id + '/edit'} }]"
+                                    replaceUrl="true"
+                                    class="btn btn-primary btn-sm">
+                                <span class="fa fa-pencil"></span>
+                                <span class="d-none d-md-inline">Edit</span>
+                            </button>
+                            <button type="submit"
+                                    [routerLink]="['/', { outlets: { popup: 'invoice/'+ invoice.id + '/delete'} }]"
+                                    replaceUrl="true"
+                                    class="btn btn-danger btn-sm">
+                                <span class="fa fa-remove"></span>
+                                <span class="d-none d-md-inline">Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div *ngSwitchCase="true" class="alert alert-success">
+        <span *ngIf="account"> You are logged in as user "{{account.login}}"</span>
     </div>
 </div>

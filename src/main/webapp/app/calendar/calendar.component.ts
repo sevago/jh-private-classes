@@ -29,7 +29,7 @@ import { Principal } from '../shared';
 import { JhiEventManager } from 'ng-jhipster';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
-import { LessonService } from '../entities/lesson';
+import {Lesson, LessonService} from '../entities/lesson';
 
 const colors: any = {
     red: {
@@ -81,7 +81,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     ];
     refresh: Subject<any> = new Subject();
     events: CalendarEvent[] = [];
-    activeDayIsOpen = true;
+    activeDayIsOpen = false;
     account: any;
 
     constructor(private principal: Principal,
@@ -119,13 +119,33 @@ export class CalendarComponent implements OnInit, OnDestroy {
     }
 
     populateCalendar() {
+        const monthEnd = endOfMonth(this.viewDate);
+        const month = format(monthEnd, 'YYYY-MM');
 
-    }
+        this.lessonService.byMonth(month).subscribe((response) => {
+            console.log(response);
+            response.json.forEach((lesson) => {
+                // const value = lesson.exercise + lesson.meals + lesson.alcohol;
+                let title = lesson.lessonTypeDescription + ' :';
+                lesson.students.forEach((student) => {
+                    title += ' ' + student.name + ',';
+                });
+                title = title.replace(/,\s*$/, '');
+                this.events.push({
+                    start: startOfDay(lesson.date),
+                    end: endOfDay(lesson.date),
+                    title,
+                    color: colors.green,
+                    draggable: false,
+                    actions: this.actions,
+                    meta: {
+                        id: lesson.id,
+                        entity: 'lesson'
+                    }
+                });
 
-    beforeMonthViewRender({body}: { body: CalendarMonthViewDay[] }): void {
-        body.forEach((cell) => {
-            cell['dayPoints'] = cell.events.filter((e) => e.meta['entity'] === 'points');
-            cell['weekPoints'] = cell.events.filter((e) => e.meta['entity'] === 'totalPoints');
+            });
+            this.refresh.next();
         });
     }
 

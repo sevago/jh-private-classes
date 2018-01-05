@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -98,6 +101,20 @@ public class LessonResource {
         Page<LessonDTO> page = lessonService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/lessons");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /lessons/by-month : get all the lessons for a particular month.
+     *
+     * @param yearWithMonth the year and the month to retrieve lessons for
+     * @return the ResponseEntity with status 200 (OK) and the list of lessons in body
+     */
+    @GetMapping("/lessons/by-month/{yearWithMonth}")
+    @Timed
+    public List<LessonDTO> getLessonsByMonth(@PathVariable @DateTimeFormat(pattern="yyyy-MM") YearMonth yearWithMonth) {
+        log.debug("REST request to get a all Lessons by month");
+        LocalDate endOfMonth = yearWithMonth.atEndOfMonth();
+        return lessonService.findAllByDateBetween(yearWithMonth.atDay(1), endOfMonth);
     }
 
     /**

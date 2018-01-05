@@ -55,6 +55,11 @@ export class LessonService {
             .map((res: any) => this.convertResponse(res));
     }
 
+    byMonth(month: string): Observable<ResponseWrapper> {
+        return this.http.get(`${this.resourceUrl}/by-month/${month}`)
+            .map((res: any) => this.convertResponse(res));
+    }
+
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
         const result = [];

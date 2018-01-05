@@ -18,6 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -77,7 +82,7 @@ public class LessonServiceImpl implements LessonService{
         return Stream.of(AuthoritiesConstants.ADMIN)
             .map(authority -> {
                 if(SecurityUtils.isCurrentUserInRole(authority)) {
-                    return lessonRepository.findAll(pageable);
+                    return lessonRepository.findAllByOrderByDateDesc(pageable);
                 } else {
                     return lessonRepository.findByTeachingInstructorUserLoginOrderByDateDesc(SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
                         new InternalServerErrorException("Current user login not found")), pageable);
@@ -129,5 +134,30 @@ public class LessonServiceImpl implements LessonService{
         log.debug("Request to search for a page of Lessons for query {}", query);
         Page<Lesson> result = lessonSearchRepository.search(queryStringQuery(query), pageable);
         return result.map(lessonMapper::toDto);
+    }
+
+    /**
+     * Get all the lesson corresponding to the particular time frame.
+     *
+     * @param startDate the from date
+     * @param endDate the to date
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<LessonDTO> findAllByDateBetween(LocalDate startDate, LocalDate endDate) {
+        log.debug("Request to get all Locations");
+        return Stream.of(AuthoritiesConstants.ADMIN)
+            .map(authority -> {
+                if(SecurityUtils.isCurrentUserInRole(authority)) {
+                    return lessonRepository.findAllByDateBetween(startDate, endDate);
+                } else {
+                    return lessonRepository.findAllByDateBetweenAndTeachingInstructorUserLogin(startDate, endDate, SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                        new InternalServerErrorException("Current user login not found")));
+                }
+            })
+            .flatMap(Collection::stream)
+            .map(lessonMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 }

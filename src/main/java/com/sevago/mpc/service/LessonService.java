@@ -4,6 +4,9 @@ import com.sevago.mpc.service.dto.LessonDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.util.List;
+
 /**
  * Service Interface for managing Lesson.
  */
@@ -44,9 +47,19 @@ public interface LessonService {
      * Search for the lesson corresponding to the query.
      *
      * @param query the query of the search
-     * 
+     *
      * @param pageable the pagination information
      * @return the list of entities
      */
     Page<LessonDTO> search(String query, Pageable pageable);
+
+    /**
+     * Get all the lesson corresponding to the particular time frame.
+     *
+     * @param startDate the from date
+     * @param endDate the to date
+     * @return the list of entities
+     */
+    List<LessonDTO> findAllByDateBetween(LocalDate startDate, LocalDate endDate);
 }
+

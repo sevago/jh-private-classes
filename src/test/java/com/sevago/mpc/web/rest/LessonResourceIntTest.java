@@ -4,6 +4,7 @@ import com.sevago.mpc.PrivateclassesApp;
 
 import com.sevago.mpc.domain.*;
 import com.sevago.mpc.repository.LessonRepository;
+import com.sevago.mpc.repository.UserRepository;
 import com.sevago.mpc.service.ActivityService;
 import com.sevago.mpc.service.LessonService;
 import com.sevago.mpc.repository.search.LessonSearchRepository;
@@ -14,6 +15,7 @@ import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.LessonMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,14 +36,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static com.sevago.mpc.security.DomainUserDetailsServiceIntTest.USER;
 import static com.sevago.mpc.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -96,9 +104,7 @@ public class LessonResourceIntTest {
 
     private Lesson lesson;
 
-    private static UserDTO userDTO;
-
-    private static User user;
+    private User user;
 
     @Before
     public void setup() {
@@ -154,6 +160,36 @@ public class LessonResourceIntTest {
     public void initTest() {
         lessonSearchRepository.deleteAll();
         lesson = createEntity(em);
+        user = ActivityResourceIntTest.userAuthentication(userService, authenticationManager);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        lessonRepository.deleteAll();
+        userService.deleteUser(USER);
+    }
+
+    private void createLessonsByWeek(LocalDate thisMonday, LocalDate lastMonday) {
+        // Create lessons in two separate weeks
+        lesson = createEntity(em);
+        lesson.setDate(thisMonday.plusDays(2));
+        lesson.getTeachingInstructor().setUser(user);
+        lessonRepository.saveAndFlush(lesson);
+
+        lesson = createEntity(em);
+        lesson.setDate(thisMonday.plusDays(3));
+        lesson.getTeachingInstructor().setUser(user);
+        lessonRepository.saveAndFlush(lesson);
+
+        lesson = createEntity(em);
+        lesson.setDate(lastMonday.plusDays(3));
+        lesson.getTeachingInstructor().setUser(user);
+        lessonRepository.saveAndFlush(lesson);
+
+        lesson = createEntity(em);
+        lesson.setDate(lastMonday.plusDays(4));
+        lesson.getTeachingInstructor().setUser(user);
+        lessonRepository.saveAndFlush(lesson);
     }
 
     @Test
@@ -261,20 +297,6 @@ public class LessonResourceIntTest {
     @Test
     @Transactional
     public void getAllLessons() throws Exception {
-        // User Login
-        userDTO = new UserDTO();
-        userDTO.setLogin("test");
-        userDTO.setEmail("test@localhost");
-        userDTO.setFirstName("test");
-        userDTO.setLastName("test");
-
-        user = userService.registerUser(userDTO, "");
-        userService.activateRegistration(user.getActivationKey());
-        UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
-        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // Set user reference
         lesson.getTeachingInstructor().setUser(user);
 
@@ -445,5 +467,32 @@ public class LessonResourceIntTest {
     public void testEntityFromId() {
         assertThat(lessonMapper.fromId(42L).getId()).isEqualTo(42);
         assertThat(lessonMapper.fromId(null)).isNull();
+    }
+
+    @Test
+    @Transactional
+    public void getLessonsByMonth() throws Exception {
+        LocalDate today = LocalDate.now();
+        LocalDate thisMonday = today.with(DayOfWeek.MONDAY);
+        LocalDate lastMonday = thisMonday.minusDays(7);
+        createLessonsByWeek(thisMonday, lastMonday);
+
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM");
+        String startDate = fmt.format(today.withDayOfMonth(1));
+        LocalDate firstDate = thisMonday.plusDays(2);
+        LocalDate secondDate = thisMonday.plusDays(3);
+
+        if (today.getMonthValue() < firstDate.getMonthValue() || today.getMonthValue() < secondDate.getMonthValue()) {
+            firstDate = lastMonday.plusDays(3);
+            secondDate = lastMonday.plusDays(4);
+        }
+
+        restLessonMockMvc.perform(get("/api/lessons/by-month/{yearWithMonth}", startDate)
+            .with(user("user").roles("USER")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*].date").value(hasItem(firstDate.toString())))
+            .andExpect(jsonPath("$.[*].date").value(hasItem(secondDate.toString())));
     }
 }

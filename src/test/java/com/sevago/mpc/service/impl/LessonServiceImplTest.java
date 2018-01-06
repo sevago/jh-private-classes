@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -140,5 +141,36 @@ public class LessonServiceImplTest {
         //then
         assertThat(lessonList).hasSize(sizeBeforeDelete - 1);
         assertThat(lessonExistsInSearchRepo).isTrue();
+    }
+
+    @Test
+    public void assertThatFindAllByDateBetweenCanFindOnlyRelevantLessons() {
+        //given
+        LocalDate today = LocalDate.now();
+        int sizeBeforeSave = lessonRepository.findAll().size();
+
+        Lesson lesson = LessonResourceIntTest.createEntity(em);
+        lesson.getTeachingInstructor().setUser(user);
+        lesson.setDate(today);
+        lessonRepository.saveAndFlush(lesson);
+
+        lesson = LessonResourceIntTest.createEntity(em);
+        lesson.getTeachingInstructor().setUser(user);
+        lesson.setDate(today.minusDays(4));
+        lessonRepository.saveAndFlush(lesson);
+
+        lesson = LessonResourceIntTest.createEntity(em);
+        lesson.getTeachingInstructor().setUser(user);
+        lesson.setDate(today.minusDays(7));
+        lessonRepository.saveAndFlush(lesson);
+
+
+        //when
+        List<Lesson> allLessons = lessonRepository.findAll();
+        List<LessonDTO> lessonsWithinRange = lessonService.findAllByDateBetween(today.minusDays(5), today.minusDays(3));
+
+        //then
+        assertThat(allLessons).hasSize(sizeBeforeSave + 3);
+        assertThat(lessonsWithinRange).hasSize(1);
     }
 }

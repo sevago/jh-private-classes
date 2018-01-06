@@ -15,6 +15,7 @@ import com.sevago.mpc.service.dto.UserDTO;
 import com.sevago.mpc.service.mapper.InvoiceMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +40,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
+import static com.sevago.mpc.security.DomainUserDetailsServiceIntTest.USER;
 import static com.sevago.mpc.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -110,9 +112,7 @@ public class InvoiceResourceIntTest {
 
     private Invoice invoice;
 
-    private static UserDTO userDTO;
-
-    private static User user;
+    private User user;
 
     @Before
     public void setup() {
@@ -157,6 +157,13 @@ public class InvoiceResourceIntTest {
     public void initTest() {
         invoiceSearchRepository.deleteAll();
         invoice = createEntity(em);
+        user = ActivityResourceIntTest.userAuthentication(userService, authenticationManager);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        invoiceRepository.deleteAll();
+        userService.deleteUser(USER);
     }
 
     @Test
@@ -306,20 +313,6 @@ public class InvoiceResourceIntTest {
     @Test
     @Transactional
     public void getAllInvoices() throws Exception {
-        // User Login
-        userDTO = new UserDTO();
-        userDTO.setLogin("test");
-        userDTO.setEmail("test@localhost");
-        userDTO.setFirstName("test");
-        userDTO.setLastName("test");
-
-        user = userService.registerUser(userDTO, "");
-        userService.activateRegistration(user.getActivationKey());
-        UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(userDTO.getLogin(), "");
-        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // Set user reference
         invoice.getTeachingInstructor().setUser(user);
 

@@ -59,6 +59,7 @@ public class CacheConfiguration {
             cm.createCache(com.sevago.mpc.domain.Rate.class.getName() + ".instructors", jcacheConfiguration);
             cm.createCache(com.sevago.mpc.domain.Activity.class.getName(), jcacheConfiguration);
             cm.createCache(com.sevago.mpc.domain.Location.class.getName(), jcacheConfiguration);
+            cm.createCache(com.sevago.mpc.domain.Preferences.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

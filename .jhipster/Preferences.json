@@ -1,0 +1,50 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "user",
+            "otherEntityName": "user",
+            "otherEntityField": "login",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "preferences"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "defaultInstructor",
+            "otherEntityName": "instructor",
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "defaultActivity",
+            "otherEntityName": "activity",
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "defaultLocation",
+            "otherEntityName": "location",
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "defaultLessonType",
+            "otherEntityName": "lessonType",
+            "otherEntityField": "description"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "defaultRate",
+            "otherEntityName": "rate",
+            "otherEntityField": "description"
+        }
+    ],
+    "fields": [],
+    "changelogDate": "20180214055229",
+    "entityTableName": "preferences",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false
+}

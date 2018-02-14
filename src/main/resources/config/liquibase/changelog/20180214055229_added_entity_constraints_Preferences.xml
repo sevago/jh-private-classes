@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <!--
+        Added the constraints for entity Preferences.
+    -->
+    <changeSet id="20180214055229-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="preferences"
+                                 constraintName="fk_preferences_user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
+
+        <addForeignKeyConstraint baseColumnNames="default_instructor_id"
+                                 baseTableName="preferences"
+                                 constraintName="fk_preferences_default_instructor_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="instructor"/>
+
+        <addForeignKeyConstraint baseColumnNames="default_activity_id"
+                                 baseTableName="preferences"
+                                 constraintName="fk_preferences_default_activity_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="activity"/>
+
+        <addForeignKeyConstraint baseColumnNames="default_location_id"
+                                 baseTableName="preferences"
+                                 constraintName="fk_preferences_default_location_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="location"/>
+
+        <addForeignKeyConstraint baseColumnNames="default_lesson_type_id"
+                                 baseTableName="preferences"
+                                 constraintName="fk_preferences_default_lesson_type_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="lesson_type"/>
+
+        <addForeignKeyConstraint baseColumnNames="default_rate_id"
+                                 baseTableName="preferences"
+                                 constraintName="fk_preferences_default_rate_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="rate"/>
+
+    </changeSet>
+</databaseChangeLog>

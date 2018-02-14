@@ -8,6 +8,7 @@ import { PrivateclassesInvoiceModule } from './invoice/invoice.module';
 import { PrivateclassesRateModule } from './rate/rate.module';
 import { PrivateclassesActivityModule } from './activity/activity.module';
 import { PrivateclassesLocationModule } from './location/location.module';
+import { PrivateclassesPreferencesModule } from './preferences/preferences.module';
 /* jhipster-needle-add-entity-module-import - JHipster will add entity modules imports here */
 
 @NgModule({
@@ -20,6 +21,7 @@ import { PrivateclassesLocationModule } from './location/location.module';
         PrivateclassesRateModule,
         PrivateclassesActivityModule,
         PrivateclassesLocationModule,
+        PrivateclassesPreferencesModule,
         /* jhipster-needle-add-entity-module - JHipster will add entity modules here */
     ],
     declarations: [],

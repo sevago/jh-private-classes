@@ -8,6 +8,8 @@ MIN_PHONE = 10
 MAX_PHONE = 13
 MAX_DURATION = 24
 
+entity Preferences {}
+
 entity Lesson {
 	date LocalDate required,
 	duration BigDecimal required max(MAX_DURATION),
@@ -15,7 +17,7 @@ entity Lesson {
 }
 
 entity Instructor {
-	name String required minlength(MIN_NAME) maxlength(MAX_NAME) pattern(/^[ A-Za-z0-9]+$/),
+	name String required minlength(MIN_NAME) maxlength(MAX_NAME) pattern(/^[A-Za-z0-9]+$/),
     address String minlength(MIN_ADDRESS) maxlength(MAX_ADDRESS),
     phoneNumber String minlength(MIN_PHONE) maxlength(MAX_PHONE),
     email String minlength(MIN_EMAIL) maxlength(MAX_EMAIL) pattern(/^[_.@A-Za-z0-9-]+$/)
@@ -27,7 +29,7 @@ entity LessonType {
 }
 
 entity Student {
-	name String required minlength(MIN_NAME) maxlength(MAX_NAME) pattern(/^[ A-Za-z0-9]+$/),
+	name String required minlength(MIN_NAME) maxlength(MAX_NAME) pattern(/^[A-Za-z0-9]+$/),
 	phoneNumber String minlength(MIN_PHONE) maxlength(MAX_PHONE),
     email String minlength(MIN_EMAIL) maxlength(MAX_EMAIL) pattern(/^[_.@A-Za-z0-9-]+$/)
 }
@@ -68,10 +70,22 @@ enum RateCurrency {
 	CAD, USD, EUR
 }
 
+relationship OneToOne {
+    Preferences{user(login)} to User
+}
+
 relationship OneToMany {
 	Student{invoice} to Invoice{billToStudent(name) required},
     Instructor{invoice} to Invoice{teachingInstructor(name) required},
 	Instructor{lesson} to Lesson{teachingInstructor(name) required}
+}
+
+relationship ManyToOne {
+    Preferences{defaultInstructor(name)} to Instructor,
+    Preferences{defaultActivity(name)} to Activity,
+    Preferences{defaultLocation(name)} to Location,
+    Preferences{defaultLessonType(description)} to LessonType,
+    Preferences{defaultRate(description)} to Rate
 }
 
 relationship ManyToOne {

@@ -1,0 +1,55 @@
+
+<div *ngIf="preferences">
+    <h2><span>Preferences</span> {{preferences.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span>User</span></dt>
+        <dd>
+            {{preferences.userLogin}}
+        </dd>
+        <dt><span>Default Instructor</span></dt>
+        <dd>
+            <div *ngIf="preferences.defaultInstructorId">
+                <a [routerLink]="['/instructor', preferences.defaultInstructorId]">{{preferences.defaultInstructorName}}</a>
+            </div>
+        </dd>
+        <dt><span>Default Activity</span></dt>
+        <dd>
+            <div *ngIf="preferences.defaultActivityId">
+                <a [routerLink]="['/activity', preferences.defaultActivityId]">{{preferences.defaultActivityName}}</a>
+            </div>
+        </dd>
+        <dt><span>Default Location</span></dt>
+        <dd>
+            <div *ngIf="preferences.defaultLocationId">
+                <a [routerLink]="['/location', preferences.defaultLocationId]">{{preferences.defaultLocationName}}</a>
+            </div>
+        </dd>
+        <dt><span>Default Lesson Type</span></dt>
+        <dd>
+            <div *ngIf="preferences.defaultLessonTypeId">
+                <a [routerLink]="['/lesson-type', preferences.defaultLessonTypeId]">{{preferences.defaultLessonTypeDescription}}</a>
+            </div>
+        </dd>
+        <dt><span>Default Rate</span></dt>
+        <dd>
+            <div *ngIf="preferences.defaultRateId">
+                <a [routerLink]="['/rate', preferences.defaultRateId]">{{preferences.defaultRateDescription}}</a>
+            </div>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'preferences/'+ preferences.id + '/edit'} }]"
+            replaceUrl="true"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span> Edit</span>
+    </button>
+</div>

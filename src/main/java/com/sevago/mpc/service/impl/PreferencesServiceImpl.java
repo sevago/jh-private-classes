@@ -1,5 +1,9 @@
 package com.sevago.mpc.service.impl;
 
+import com.sevago.mpc.config.ApplicationProperties;
+import com.sevago.mpc.repository.UserRepository;
+import com.sevago.mpc.security.AuthoritiesConstants;
+import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.PreferencesService;
 import com.sevago.mpc.domain.Preferences;
 import com.sevago.mpc.repository.PreferencesRepository;
@@ -11,9 +15,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -23,7 +29,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @Service
 @Transactional
-public class PreferencesServiceImpl implements PreferencesService{
+public class PreferencesServiceImpl extends CommonServiceImpl implements PreferencesService{
 
     private final Logger log = LoggerFactory.getLogger(PreferencesServiceImpl.class);
 
@@ -33,10 +39,13 @@ public class PreferencesServiceImpl implements PreferencesService{
 
     private final PreferencesSearchRepository preferencesSearchRepository;
 
-    public PreferencesServiceImpl(PreferencesRepository preferencesRepository, PreferencesMapper preferencesMapper, PreferencesSearchRepository preferencesSearchRepository) {
+    private final ApplicationProperties applicationProperties;
+
+    public PreferencesServiceImpl(PreferencesRepository preferencesRepository, PreferencesMapper preferencesMapper, PreferencesSearchRepository preferencesSearchRepository, ApplicationProperties applicationProperties, UserRepository userRepository) {
         this.preferencesRepository = preferencesRepository;
         this.preferencesMapper = preferencesMapper;
         this.preferencesSearchRepository = preferencesSearchRepository;
+        this.applicationProperties = applicationProperties;
     }
 
     /**
@@ -49,9 +58,12 @@ public class PreferencesServiceImpl implements PreferencesService{
     public PreferencesDTO save(PreferencesDTO preferencesDTO) {
         log.debug("Request to save Preferences : {}", preferencesDTO);
         Preferences preferences = preferencesMapper.toEntity(preferencesDTO);
+        preferences = (Preferences) populateDefaultProperties(preferences);
         preferences = preferencesRepository.save(preferences);
         PreferencesDTO result = preferencesMapper.toDto(preferences);
-        preferencesSearchRepository.save(preferences);
+        if (applicationProperties.getElasticsearch().isEnabled()) {
+            preferencesSearchRepository.save(preferences);
+        }
         return result;
     }
 
@@ -64,7 +76,15 @@ public class PreferencesServiceImpl implements PreferencesService{
     @Transactional(readOnly = true)
     public List<PreferencesDTO> findAll() {
         log.debug("Request to get all Preferences");
-        return preferencesRepository.findAll().stream()
+        return Stream.of(AuthoritiesConstants.ADMIN)
+            .map(authority -> {
+                if(SecurityUtils.isCurrentUserInRole(authority)) {
+                    return preferencesRepository.findAll();
+                } else {
+                    return preferencesRepository.findByUserIsCurrentUser();
+                }
+            })
+            .flatMap(Collection::stream)
             .map(preferencesMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }
@@ -92,7 +112,9 @@ public class PreferencesServiceImpl implements PreferencesService{
     public void delete(Long id) {
         log.debug("Request to delete Preferences : {}", id);
         preferencesRepository.delete(id);
-        preferencesSearchRepository.delete(id);
+        if (applicationProperties.getElasticsearch().isEnabled()) {
+            preferencesSearchRepository.delete(id);
+        }
     }
 
     /**

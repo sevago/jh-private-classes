@@ -40,14 +40,11 @@ public class ActivityServiceImpl extends CommonServiceImpl implements ActivitySe
 
     private final ApplicationProperties applicationProperties;
 
-    private final UserRepository userRepository;
-
     public ActivityServiceImpl(ActivityRepository activityRepository, ActivityMapper activityMapper, ActivitySearchRepository activitySearchRepository, ApplicationProperties applicationProperties, UserRepository userRepository) {
         this.activityRepository = activityRepository;
         this.activityMapper = activityMapper;
         this.activitySearchRepository = activitySearchRepository;
         this.applicationProperties = applicationProperties;
-        this.userRepository = userRepository;
     }
 
     /**

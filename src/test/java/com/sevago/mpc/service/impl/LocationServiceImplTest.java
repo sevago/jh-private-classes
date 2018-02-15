@@ -35,11 +35,9 @@ import static org.junit.Assert.*;
 @Transactional
 public class LocationServiceImplTest {
 
-    private static final String NAME_ONE = "Name One";
     private static final String NAME_TWO = "Name Two";
     private static final String USER = "test";
 
-    private UserDTO userDTO;
     private User user;
 
     @Autowired

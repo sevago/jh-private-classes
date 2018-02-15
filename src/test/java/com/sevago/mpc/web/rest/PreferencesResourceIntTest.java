@@ -3,13 +3,16 @@ package com.sevago.mpc.web.rest;
 import com.sevago.mpc.PrivateclassesApp;
 
 import com.sevago.mpc.domain.Preferences;
+import com.sevago.mpc.domain.User;
 import com.sevago.mpc.repository.PreferencesRepository;
 import com.sevago.mpc.service.PreferencesService;
 import com.sevago.mpc.repository.search.PreferencesSearchRepository;
+import com.sevago.mpc.service.UserService;
 import com.sevago.mpc.service.dto.PreferencesDTO;
 import com.sevago.mpc.service.mapper.PreferencesMapper;
 import com.sevago.mpc.web.rest.errors.ExceptionTranslator;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -27,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.sevago.mpc.security.DomainUserDetailsServiceIntTest.USER;
 import static com.sevago.mpc.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -66,9 +71,17 @@ public class PreferencesResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
     private MockMvc restPreferencesMockMvc;
 
     private Preferences preferences;
+
+    private User user;
 
     @Before
     public void setup() {
@@ -96,6 +109,13 @@ public class PreferencesResourceIntTest {
     public void initTest() {
         preferencesSearchRepository.deleteAll();
         preferences = createEntity(em);
+        user = ActivityResourceIntTest.userAuthentication(userService, authenticationManager);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        preferencesRepository.deleteAll();
+        userService.deleteUser(USER);
     }
 
     @Test
@@ -143,6 +163,9 @@ public class PreferencesResourceIntTest {
     @Test
     @Transactional
     public void getAllPreferences() throws Exception {
+        // Set user reference
+        preferences.setUser(user);
+
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
 

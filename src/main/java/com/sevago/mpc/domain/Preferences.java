@@ -16,7 +16,7 @@ import java.util.Objects;
 @Table(name = "preferences")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "preferences")
-public class Preferences implements Serializable {
+public class Preferences implements Serializable, MpcEntity {
 
     private static final long serialVersionUID = 1L;
 

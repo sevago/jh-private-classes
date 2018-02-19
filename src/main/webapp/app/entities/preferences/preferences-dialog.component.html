@@ -1,7 +1,7 @@
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
     <div class="modal-header">
-        <h4 class="modal-title" id="myPreferencesLabel">Create or edit a Preferences</h4>
+        <h4 class="modal-title" id="myPreferencesLabel">Create or edit User Preferences</h4>
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                 (click)="clear()">&times;</button>
     </div>
@@ -11,14 +11,6 @@
             <label for="id">ID</label>
             <input type="text" class="form-control" id="id" name="id"
                    [(ngModel)]="preferences.id" readonly />
-        </div>
-
-        <div class="form-group">
-            <label class="form-control-label" for="field_user">User</label>
-            <select class="form-control" id="field_user" name="user" [(ngModel)]="preferences.userId" >
-                <option [ngValue]="null"></option>
-                <option [ngValue]="userOption.id" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
-            </select>
         </div>
         <div class="form-group">
             <label class="form-control-label" for="field_defaultInstructor">Default Instructor</label>
@@ -53,6 +45,13 @@
             <select class="form-control" id="field_defaultRate" name="defaultRate" [(ngModel)]="preferences.defaultRateId" >
                 <option [ngValue]="null"></option>
                 <option [ngValue]="rateOption.id" *ngFor="let rateOption of rates; trackBy: trackRateById">{{rateOption.description}}</option>
+            </select>
+        </div>
+        <div *jhiHasAnyAuthority="'ROLE_ADMIN'" class="form-group">
+            <label class="form-control-label" for="field_user">User</label>
+            <select class="form-control" id="field_user" name="user" [(ngModel)]="preferences.userId" >
+                <option [ngValue]="null"></option>
+                <option [ngValue]="userOption.id" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
             </select>
         </div>
     </div>

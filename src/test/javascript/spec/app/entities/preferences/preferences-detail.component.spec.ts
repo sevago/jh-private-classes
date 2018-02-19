@@ -27,7 +27,11 @@ describe('Component Tests', () => {
                     DatePipe,
                     {
                         provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({id: 123})
+                        useValue: {
+                            data: Observable.of({
+                                preferences: new Preferences(10)
+                            })
+                        }
                     },
                     PreferencesService,
                     JhiEventManager
@@ -43,17 +47,30 @@ describe('Component Tests', () => {
         });
 
         describe('OnInit', () => {
-            it('Should call load all on init', () => {
-            // GIVEN
+            it('Should get preferences from the route data', () => {
+                // GIVEN
 
-            spyOn(service, 'find').and.returnValue(Observable.of(new Preferences(10)));
+                // WHEN
+                comp.ngOnInit();
 
-            // WHEN
-            comp.ngOnInit();
+                // THEN
+                expect(comp.preferences).toEqual(jasmine.objectContaining({id: 10}));
+            });
+        });
 
-            // THEN
-            expect(service.find).toHaveBeenCalledWith(123);
-            expect(comp.preferences).toEqual(jasmine.objectContaining({id: 10}));
+        describe('Load', () => {
+            it('Should call find on the service', () => {
+                // GIVEN
+
+                spyOn(service, 'find').and.returnValue(Observable.of(new Preferences(10)));
+
+                // WHEN
+                comp.ngOnInit();
+                comp.load(comp.preferences.id);
+
+                // THEN
+                expect(service.find).toHaveBeenCalledWith(10);
+                expect(comp.preferences).toEqual(jasmine.objectContaining({id: 10}));
             });
         });
     });

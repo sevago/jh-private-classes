@@ -1,6 +1,6 @@
 <div>
     <h2>
-        <span>Preferences</span>
+        <span>User Preferences</span>
         <button class="btn btn-primary float-right jh-create-entity create-preferences" [routerLink]="['/', { outlets: { popup: ['preferences-new'] } }]">
             <span class="fa fa-plus"></span>
             <span class="hidden-sm-down" >
@@ -9,7 +9,7 @@
         </button>
     </h2>
     <jhi-alert></jhi-alert>
-    <div class="row">
+    <div class="row" *ngIf="elasticsearchEnabled">
         <div class="col-sm-12">
             <form name="searchForm" class="form-inline">
                 <div class="input-group w-100 mt-3">
@@ -29,22 +29,20 @@
         <table class="table table-striped">
             <thead>
             <tr>
-            <th><span>ID</span></th>
-            <th><span>User</span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>ID</span></th>
             <th><span>Default Instructor</span></th>
             <th><span>Default Activity</span></th>
             <th><span>Default Location</span></th>
             <th><span>Default Lesson Type</span></th>
             <th><span>Default Rate</span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>User</span></th>
             <th></th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let preferences of preferences ;trackBy: trackId">
-                <td><a [routerLink]="['../preferences', preferences.id ]">{{preferences.id}}</a></td>
-                <td>
-                    {{preferences.userLogin}}
-                </td>
+                <td *jhiHasAnyAuthority="'ROLE_ADMIN'"><a [routerLink]="['../preferences', preferences.id ]">{{preferences.id}}</a></td>
+
                 <td>
                     <div *ngIf="preferences.defaultInstructorId">
                         <a [routerLink]="['../instructor', preferences.defaultInstructorId  ]" >{{preferences.defaultInstructorName}}</a>
@@ -69,6 +67,9 @@
                     <div *ngIf="preferences.defaultRateId">
                         <a [routerLink]="['../rate', preferences.defaultRateId  ]" >{{preferences.defaultRateDescription}}</a>
                     </div>
+                </td>
+                <td *jhiHasAnyAuthority="'ROLE_ADMIN'">
+                    {{preferences.userLogin}}
                 </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">

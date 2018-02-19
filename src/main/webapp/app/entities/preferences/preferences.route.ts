@@ -8,6 +8,7 @@ import { PreferencesComponent } from './preferences.component';
 import { PreferencesDetailComponent } from './preferences-detail.component';
 import { PreferencesPopupComponent } from './preferences-dialog.component';
 import { PreferencesDeletePopupComponent } from './preferences-delete-dialog.component';
+import { PreferencesResolve } from './preferences.resolve';
 
 export const preferencesRoute: Routes = [
     {
@@ -25,7 +26,10 @@ export const preferencesRoute: Routes = [
             authorities: ['ROLE_USER'],
             pageTitle: 'Preferences'
         },
-        canActivate: [UserRouteAccessService]
+        canActivate: [UserRouteAccessService],
+        resolve: {
+            activity: PreferencesResolve
+        }
     }
 ];
 

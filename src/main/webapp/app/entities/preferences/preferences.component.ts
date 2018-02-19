@@ -6,6 +6,7 @@ import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 import { Preferences } from './preferences.model';
 import { PreferencesService } from './preferences.service';
 import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
+import {ProfileService} from '../../layouts';
 
 @Component({
     selector: 'jhi-preferences',
@@ -16,13 +17,15 @@ preferences: Preferences[];
     currentAccount: any;
     eventSubscriber: Subscription;
     currentSearch: string;
+    elasticsearchEnabled = false;
 
     constructor(
         private preferencesService: PreferencesService,
         private jhiAlertService: JhiAlertService,
         private eventManager: JhiEventManager,
         private activatedRoute: ActivatedRoute,
-        private principal: Principal
+        private principal: Principal,
+        private profileService: ProfileService
     ) {
         this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
     }
@@ -64,6 +67,7 @@ preferences: Preferences[];
             this.currentAccount = account;
         });
         this.registerChangeInPreferences();
+        this.getElasticsearchEnabled();
     }
 
     ngOnDestroy() {
@@ -79,5 +83,11 @@ preferences: Preferences[];
 
     private onError(error) {
         this.jhiAlertService.error(error.message, null, null);
+    }
+
+    getElasticsearchEnabled() {
+        this.profileService.getProfileInfo().then((profileInfo) => {
+            this.elasticsearchEnabled = profileInfo.elasticsearchEnabled;
+        });
     }
 }

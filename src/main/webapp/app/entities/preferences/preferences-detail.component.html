@@ -1,13 +1,9 @@
 
 <div *ngIf="preferences">
-    <h2><span>Preferences</span> {{preferences.id}}</h2>
+    <h2><span>User Preferences for</span> {{preferences.userLogin}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <dl class="row-md jh-entity-details">
-        <dt><span>User</span></dt>
-        <dd>
-            {{preferences.userLogin}}
-        </dd>
         <dt><span>Default Instructor</span></dt>
         <dd>
             <div *ngIf="preferences.defaultInstructorId">
@@ -37,6 +33,10 @@
             <div *ngIf="preferences.defaultRateId">
                 <a [routerLink]="['/rate', preferences.defaultRateId]">{{preferences.defaultRateDescription}}</a>
             </div>
+        </dd>
+        <dt *jhiHasAnyAuthority="'ROLE_ADMIN'"><span>User</span></dt>
+        <dd *jhiHasAnyAuthority="'ROLE_ADMIN'">
+            {{preferences.userLogin}}
         </dd>
     </dl>
 

@@ -28,7 +28,6 @@
             <input type="text" class="form-control" name="description" id="field_description"
                 [(ngModel)]="activity.description" />
         </div>
-
         <div *jhiHasAnyAuthority="'ROLE_ADMIN'" class="form-group">
             <label class="form-control-label" for="field_user">User</label>
             <select class="form-control" id="field_user" name="user" [(ngModel)]="activity.userId" >

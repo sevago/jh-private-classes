@@ -30,8 +30,9 @@ public class MpcBootstrap implements CommandLineRunner {
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PreferencesRepository preferencesRepository;
 
-    public MpcBootstrap(ActivityRepository activityRepository, InstructorRepository instructorRepository, InvoiceRepository invoiceRepository, LessonRepository lessonRepository, LessonTypeRepository lessonTypeRepository, LocationRepository locationRepository, RateRepository rateRepository, StudentRepository studentRepository, UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository) {
+    public MpcBootstrap(ActivityRepository activityRepository, InstructorRepository instructorRepository, InvoiceRepository invoiceRepository, LessonRepository lessonRepository, LessonTypeRepository lessonTypeRepository, LocationRepository locationRepository, RateRepository rateRepository, StudentRepository studentRepository, UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, PreferencesRepository preferencesRepository) {
         this.activityRepository = activityRepository;
         this.instructorRepository = instructorRepository;
         this.invoiceRepository = invoiceRepository;
@@ -42,6 +43,7 @@ public class MpcBootstrap implements CommandLineRunner {
         this.studentRepository = studentRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.preferencesRepository = preferencesRepository;
     }
 
     @Transactional
@@ -85,6 +87,24 @@ public class MpcBootstrap implements CommandLineRunner {
         Set<Lesson> lessonsForSecondInvoice = new HashSet<>(Arrays.asList(firstLesson));
         Invoice firstInvoice = createInvoice(1, startLocalDate, endLocalDate, issueLocalDate, dueLocalDate, BigDecimal.valueOf(45/2+270), RateCurrency.CAD, firstInstructor, firstStudent, lessonsForFirstInvoice);
         Invoice secondInvoice = createInvoice(2, startLocalDate, endLocalDate, issueLocalDate, dueLocalDate, BigDecimal.valueOf(45/2), RateCurrency.CAD, firstInstructor, secondStudent, lessonsForSecondInvoice);
+        Preferences firstUserPreferences = createPreferences(firstInstructor, firstActivity, firstLocation, firstLessonType, firstRate, firstUser);
+    }
+
+    private Preferences createPreferences(Instructor firstInstructor,
+                                          Activity firstActivity,
+                                          Location firstLocation,
+                                          LessonType firstLessonType,
+                                          Rate firstRate,
+                                          User firstUser) {
+        Preferences preferences = new Preferences();
+        preferences.setDefaultInstructor(firstInstructor);
+        preferences.setDefaultActivity(firstActivity);
+        preferences.setDefaultLocation(firstLocation);
+        preferences.setDefaultLessonType(firstLessonType);
+        preferences.setDefaultRate(firstRate);
+        preferences.setUser(firstUser);
+        preferencesRepository.save(preferences);
+        return preferences;
     }
 
     private Invoice createInvoice(Integer number,

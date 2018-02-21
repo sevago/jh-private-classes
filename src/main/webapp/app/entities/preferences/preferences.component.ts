@@ -18,6 +18,7 @@ preferences: Preferences[];
     eventSubscriber: Subscription;
     currentSearch: string;
     elasticsearchEnabled = false;
+    isAdmin: boolean;
 
     constructor(
         private preferencesService: PreferencesService,
@@ -65,6 +66,7 @@ preferences: Preferences[];
         this.loadAll();
         this.principal.identity().then((account) => {
             this.currentAccount = account;
+            this.isAdmin = account.authorities.indexOf('ROLE_ADMIN') !== -1;
         });
         this.registerChangeInPreferences();
         this.getElasticsearchEnabled();

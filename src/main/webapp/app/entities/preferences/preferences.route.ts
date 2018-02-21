@@ -28,7 +28,7 @@ export const preferencesRoute: Routes = [
         },
         canActivate: [UserRouteAccessService],
         resolve: {
-            activity: PreferencesResolve
+            preferences: PreferencesResolve
         }
     }
 ];

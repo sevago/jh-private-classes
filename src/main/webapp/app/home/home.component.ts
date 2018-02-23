@@ -6,7 +6,8 @@ import { Account, LoginModalService, Principal } from '../shared';
 import { ResponseWrapper } from '../shared/model/response-wrapper.model';
 import { Subscription } from 'rxjs/Rx';
 import { Lesson, LessonService } from '../entities/lesson';
-import {Invoice, InvoiceService} from '../entities/invoice';
+import { Invoice, InvoiceService} from '../entities/invoice';
+import { Preferences, PreferencesService } from '../entities/preferences';
 
 @Component({
     selector: 'jhi-home',
@@ -21,6 +22,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
     lessons: Lesson[];
     invoices: Invoice[];
+    preferences: Preferences
     eventSubscriber: Subscription;
 
     constructor(
@@ -29,7 +31,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         private eventManager: JhiEventManager,
         private jhiAlertService: JhiAlertService,
         private lessonService: LessonService,
-        private invoiceService: InvoiceService
+        private invoiceService: InvoiceService,
+        private preferncesService: PreferencesService
     ) {
     }
 
@@ -83,13 +86,15 @@ export class HomeComponent implements OnInit, OnDestroy {
             },
             (res: ResponseWrapper) => this.onError(res.json)
         );
-
         this.invoiceService.query().subscribe(
             (res: ResponseWrapper) => {
                 this.invoices = res.json;
             },
             (res: ResponseWrapper) => this.onError(res.json)
         );
+        this.preferncesService.user().subscribe((preferences: Preferences) => {
+            this.preferences = preferences;
+        });
     }
 
     private onError(error) {

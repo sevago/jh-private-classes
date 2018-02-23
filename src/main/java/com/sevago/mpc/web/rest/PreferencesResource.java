@@ -1,13 +1,17 @@
 package com.sevago.mpc.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.sevago.mpc.domain.Preferences;
+import com.sevago.mpc.security.SecurityUtils;
 import com.sevago.mpc.service.PreferencesService;
 import com.sevago.mpc.web.rest.errors.BadRequestAlertException;
+import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import com.sevago.mpc.web.rest.util.HeaderUtil;
 import com.sevago.mpc.service.dto.PreferencesDTO;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -102,6 +106,19 @@ public class PreferencesResource {
     public ResponseEntity<PreferencesDTO> getPreferences(@PathVariable Long id) {
         log.debug("REST request to get Preferences : {}", id);
         PreferencesDTO preferencesDTO = preferencesService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(preferencesDTO));
+    }
+
+    /**
+     * GET  /my-preferences -> get the current user's preferences.
+     */
+    @GetMapping("/my-preferences")
+    @Timed
+    public ResponseEntity<PreferencesDTO> getUserPreferences() {
+        String username = SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+            new InternalServerErrorException("Current user login not found"));
+        log.debug("REST request to get Preferences : {}", username);
+        PreferencesDTO preferencesDTO = preferencesService.findUserPreferences();
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(preferencesDTO));
     }
 

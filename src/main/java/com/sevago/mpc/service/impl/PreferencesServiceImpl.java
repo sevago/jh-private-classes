@@ -10,6 +10,7 @@ import com.sevago.mpc.repository.PreferencesRepository;
 import com.sevago.mpc.repository.search.PreferencesSearchRepository;
 import com.sevago.mpc.service.dto.PreferencesDTO;
 import com.sevago.mpc.service.mapper.PreferencesMapper;
+import com.sevago.mpc.web.rest.errors.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -87,6 +88,20 @@ public class PreferencesServiceImpl extends CommonServiceImpl implements Prefere
             .flatMap(Collection::stream)
             .map(preferencesMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * Get user preferences.
+     *
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public PreferencesDTO findUserPreferences() {
+        Preferences preferences = preferencesRepository.findByUserIsCurrentUser()
+            .stream()
+            .findFirst().orElse(null);
+        return preferencesMapper.toDto(preferences);
     }
 
     /**

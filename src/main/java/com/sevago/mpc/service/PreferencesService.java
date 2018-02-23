@@ -24,6 +24,13 @@ public interface PreferencesService {
     List<PreferencesDTO> findAll();
 
     /**
+     * Get user preferences.
+     *
+     * @return the list of entities
+     */
+    PreferencesDTO findUserPreferences();
+
+    /**
      * Get the "id" preferences.
      *
      * @param id the id of the entity
@@ -42,7 +49,7 @@ public interface PreferencesService {
      * Search for the preferences corresponding to the query.
      *
      * @param query the query of the search
-     * 
+     *
      * @return the list of entities
      */
     List<PreferencesDTO> search(String query);

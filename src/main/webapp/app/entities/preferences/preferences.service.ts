@@ -53,6 +53,13 @@ export class PreferencesService {
             .map((res: any) => this.convertResponse(res));
     }
 
+    user(): Observable<Preferences> {
+        return this.http.get('api/my-preferences').map((res: Response) => {
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
+        });
+    }
+
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
         const result = [];

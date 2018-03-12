@@ -39,7 +39,7 @@ public class ActivityResource {
     }
 
     /**
-     * POST  /activities : Create a new activities.
+     * POST  /activities/async : Asynchronously create a list of new activities.
      *
      * @param activityDTOList the list of activityDTO's to create
      * @return the ResponseEntity with status 200 and with body the new activityDTO's list, or with status 400 (Bad Request) if the activity has already an ID
@@ -47,7 +47,7 @@ public class ActivityResource {
      */
     @PostMapping("/activities/async")
     @Timed
-    public ResponseEntity<Void> createActivitiesAsync(@Valid @RequestBody List<ActivityDTO> activityDTOList) throws URISyntaxException {
+    public ResponseEntity<Void> createActivitiesAsync(@RequestBody List<ActivityDTO> activityDTOList) {
         log.debug("REST request to save Activity : {}", activityDTOList);
         activityDTOList.stream().forEach(activityDTO -> {
             if (activityDTO.getId() != null) {

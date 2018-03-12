@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -54,7 +56,29 @@ public class ActivityServiceImpl extends CommonServiceImpl implements ActivitySe
      */
     @Override
     public void saveListAsync(List<ActivityDTO> activityDTOList) {
+        log.debug("Request to save a list of Activities : {}", activityDTOList);
+        CompletableFuture<Stream<ActivityDTO>> completableFuture = CompletableFuture.supplyAsync(() -> saveList(activityDTOList));
+        completableFuture.thenAccept(resultList -> {
+            resultList.forEach(activityDTO -> {
+                log.debug("Verifying CompletableFuture results for the new Activity instance: " + activityDTO.getName());
+            });
+        })
+        .exceptionally(error -> {
+            error.printStackTrace();
+            return null;
+        });
+    }
 
+    private Stream<ActivityDTO> saveList(List<ActivityDTO> activityDTOList) {
+        return activityDTOList.stream()
+            .map(activityDTO -> {
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return save(activityDTO);
+            });
     }
 
     /**

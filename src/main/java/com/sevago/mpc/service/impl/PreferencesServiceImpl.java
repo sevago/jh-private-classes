@@ -97,11 +97,11 @@ public class PreferencesServiceImpl extends CommonServiceImpl implements Prefere
      */
     @Override
     @Transactional(readOnly = true)
-    public PreferencesDTO findUserPreferences() {
-        Preferences preferences = preferencesRepository.findByUserIsCurrentUser()
+    public List<PreferencesDTO> findUserPreferences() {
+        return preferencesRepository.findByUserIsCurrentUser()
             .stream()
-            .findFirst().orElse(null);
-        return preferencesMapper.toDto(preferences);
+            .map(preferencesMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**

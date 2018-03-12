@@ -123,7 +123,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
         const month = format(monthEnd, 'YYYY-MM');
 
         this.lessonService.byMonth(month).subscribe((response) => {
-            console.log(response);
             response.json.forEach((lesson) => {
                 // const value = lesson.exercise + lesson.meals + lesson.alcohol;
                 let title = lesson.lessonTypeDescription + ' :';

@@ -28,7 +28,7 @@ public interface PreferencesService {
      *
      * @return the list of entities
      */
-    PreferencesDTO findUserPreferences();
+    List<PreferencesDTO> findUserPreferences();
 
     /**
      * Get the "id" preferences.

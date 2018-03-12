@@ -114,12 +114,11 @@ public class PreferencesResource {
      */
     @GetMapping("/my-preferences")
     @Timed
-    public ResponseEntity<PreferencesDTO> getUserPreferences() {
+    public List<PreferencesDTO> getUserPreferences() {
         String username = SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
             new InternalServerErrorException("Current user login not found"));
         log.debug("REST request to get Preferences : {}", username);
-        PreferencesDTO preferencesDTO = preferencesService.findUserPreferences();
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(preferencesDTO));
+        return preferencesService.findUserPreferences();
     }
 
     /**

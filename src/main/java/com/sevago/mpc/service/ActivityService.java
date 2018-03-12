@@ -9,6 +9,13 @@ import java.util.List;
 public interface ActivityService {
 
     /**
+     * Save activities list asynchronously.
+     *
+     * @param activityDTOList a list of activityDTO's to save asynchronously
+     */
+    void saveListAsync(List<ActivityDTO> activityDTOList);
+
+    /**
      * Save a activity.
      *
      * @param activityDTO the entity to save
@@ -42,7 +49,7 @@ public interface ActivityService {
      * Search for the activity corresponding to the query.
      *
      * @param query the query of the search
-     * 
+     *
      * @return the list of entities
      */
     List<ActivityDTO> search(String query);

@@ -39,6 +39,26 @@ public class ActivityResource {
     }
 
     /**
+     * POST  /activities : Create a new activities.
+     *
+     * @param activityDTOList the list of activityDTO's to create
+     * @return the ResponseEntity with status 200 and with body the new activityDTO's list, or with status 400 (Bad Request) if the activity has already an ID
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @PostMapping("/activities/async")
+    @Timed
+    public ResponseEntity<Void> createActivitiesAsync(@Valid @RequestBody List<ActivityDTO> activityDTOList) throws URISyntaxException {
+        log.debug("REST request to save Activity : {}", activityDTOList);
+        activityDTOList.stream().forEach(activityDTO -> {
+            if (activityDTO.getId() != null) {
+                throw new BadRequestAlertException("A new activity cannot already have an ID", ENTITY_NAME, "id exists");
+            }
+        });
+        activityService.saveListAsync(activityDTOList);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, "Future List")).build();
+    }
+
+    /**
      * POST  /activities : Create a new activity.
      *
      * @param activityDTO the activityDTO to create
@@ -50,7 +70,7 @@ public class ActivityResource {
     public ResponseEntity<ActivityDTO> createActivity(@Valid @RequestBody ActivityDTO activityDTO) throws URISyntaxException {
         log.debug("REST request to save Activity : {}", activityDTO);
         if (activityDTO.getId() != null) {
-            throw new BadRequestAlertException("A new activity cannot already have an ID", ENTITY_NAME, "idexists");
+            throw new BadRequestAlertException("A new activity cannot already have an ID", ENTITY_NAME, "id exists");
         }
         ActivityDTO result = activityService.save(activityDTO);
         return ResponseEntity.created(new URI("/api/activities/" + result.getId()))

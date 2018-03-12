@@ -94,6 +94,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         );
         this.preferncesService.user().subscribe((preferences: Preferences) => {
             this.preferences = preferences;
+            console.log(this.preferences);
         });
     }
 

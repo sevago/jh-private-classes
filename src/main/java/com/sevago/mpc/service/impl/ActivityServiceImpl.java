@@ -48,6 +48,16 @@ public class ActivityServiceImpl extends CommonServiceImpl implements ActivitySe
     }
 
     /**
+     * Save activities list asynchronously.
+     *
+     * @param activityDTOList a list of activityDTO's to save asynchronously
+     */
+    @Override
+    public void saveListAsync(List<ActivityDTO> activityDTOList) {
+
+    }
+
+    /**
      * Save a activity.
      *
      * @param activityDTO the entity to save
